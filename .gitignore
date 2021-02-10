@@ -1,0 +1,5 @@
+.idea
+.store
+.DS_Store
+build/
+*~

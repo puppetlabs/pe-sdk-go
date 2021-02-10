@@ -1,0 +1,41 @@
+---
+name: go-check
+on:
+ push:
+  branches: [ main ]
+ pull_request:
+  branches: [ main ]
+jobs:
+  test:
+    env:
+      GOPATH: ${{ github.workspace }}
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x, 1.15.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        path: ./src/github.com/puppetlabs/pe-sdk-go/
+    - name: Install pre-requisites
+      if: matrix.platform == 'ubuntu-latest'
+      run: go get -u golang.org/x/tools/cmd/goimports golang.org/x/lint/golint
+    - name: Format
+      if: matrix.platform == 'ubuntu-latest'
+      run: cd ./src/github.com/puppetlabs/pe-sdk-go && make format
+    - name: Vet
+      if: matrix.platform == 'ubuntu-latest'
+      run: cd ./src/github.com/puppetlabs/pe-sdk-go && make vet
+    - name: Lint
+      if: matrix.platform == 'ubuntu-latest'
+      run: cd ./src/github.com/puppetlabs/pe-sdk-go && make lint
+    - name: Test
+      run: cd ./src/github.com/puppetlabs/pe-sdk-go && make test
+
