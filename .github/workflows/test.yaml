@@ -25,16 +25,12 @@ jobs:
         fetch-depth: 0
         path: ./src/github.com/puppetlabs/pe-sdk-go/
     - name: Install pre-requisites
-      if: matrix.platform == 'ubuntu-latest'
       run: go get -u golang.org/x/tools/cmd/goimports golang.org/x/lint/golint
     - name: Format
-      if: matrix.platform == 'ubuntu-latest'
       run: cd ./src/github.com/puppetlabs/pe-sdk-go && make format
     - name: Vet
-      if: matrix.platform == 'ubuntu-latest'
       run: cd ./src/github.com/puppetlabs/pe-sdk-go && make vet
     - name: Lint
-      if: matrix.platform == 'ubuntu-latest'
       run: cd ./src/github.com/puppetlabs/pe-sdk-go && make lint
     - name: Test
       run: cd ./src/github.com/puppetlabs/pe-sdk-go && make test
