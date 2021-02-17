@@ -1,0 +1,50 @@
+swagger: "2.0"
+info:
+  title: 'pe-sdk-go'
+  version: '0.0.1'
+paths:
+  /auth/token:
+    post:
+      operationId: 'login'
+      parameters:
+        - in: body
+          name: body
+          description: Login to generate a token in RBAC
+          required: true
+          schema:
+            $ref: '#/definitions/LoginRequest'
+      responses:
+        200:
+          description: 'Login to generate a token in RBAC'
+          schema:
+            description: 'puppet access login'
+            type: object
+            properties:
+              token:
+                type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Error:
+    type: object
+    properties:
+      kind:
+        type: string
+      msg:
+        type: string
+      details:
+        type: object
+  LoginRequest:
+    type: object
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+      lifetime:
+        type: string
+      label:
+        type: string

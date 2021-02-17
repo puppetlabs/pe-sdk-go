@@ -48,6 +48,20 @@ func (mr *MockTokenMockRecorder) Read() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockToken)(nil).Read))
 }
 
+// Write mocks base method
+func (m *MockToken) Write(arg0 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Write", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Write indicates an expected call of Write
+func (mr *MockTokenMockRecorder) Write(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockToken)(nil).Write), arg0)
+}
+
 // Delete mocks base method
 func (m *MockToken) Delete(arg0 bool) error {
 	m.ctrl.T.Helper()
