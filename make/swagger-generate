@@ -9,8 +9,8 @@ GIT_ROOT=${GIT_ROOT:-$(git rev-parse --show-toplevel)}
 printf "%b==> Generating swagger client %b\n" "${OK_COLOR}" "${ERROR_COLOR}"
 
 swagger generate client \
-	--target=${GIT_ROOT}/api \
-	--spec=${GIT_ROOT}/api/api.yaml \
+	--target=${GIT_ROOT}/app/puppet-access/api \
+	--spec=${GIT_ROOT}/app/puppet-access/api/api.yaml \
 	--name=puppet-access
 
 printf "%b" "${NO_COLOR}"

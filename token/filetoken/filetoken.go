@@ -31,6 +31,28 @@ func (ft *fileToken) Read() (string, error) {
 	return ft.readToken()
 }
 
+// Write ...
+func (ft *fileToken) Write(token string) error {
+	err := os.MkdirAll(filepath.Dir(ft.path), 0700)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(ft.path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	err = file.Chmod(os.FileMode(0600))
+	if err != nil {
+		return err
+	}
+
+	_, err = file.WriteString(token)
+	return err
+}
+
 //DeleteFile deletes the token file
 //If the token is not valid, or file is a symlink an error will be returned
 func (ft *fileToken) Delete(force bool) error {
