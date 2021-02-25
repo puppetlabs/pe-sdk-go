@@ -71,6 +71,6 @@ func newOpenAPITransport(url url.URL, httpclient *http.Client) *openapihttptrans
 
 	return openapihttptransport.NewWithClient(
 		fmt.Sprintf("%s:%s", url.Hostname(), url.Port()),
-		fmt.Sprintf("%s", url.Path),
+		fmt.Sprintf("%s/v1", url.Path),
 		schemes, httpclient)
 }
