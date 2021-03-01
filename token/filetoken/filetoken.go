@@ -113,14 +113,12 @@ func isValid(content string) bool {
 
 	jwtMatched, _ := regexp.MatchString(jwtExpresion, content)
 	if jwtMatched {
-		fmt.Println("JWT")
 		log.Debug("Token is in JWT format")
 		return true
 	}
 
 	exprMatch, _ := regexp.MatchString(tokenExpr, content)
 	if exprMatch {
-		fmt.Println("valid")
 		log.Debug("Token format is valid")
 		return true
 	}
