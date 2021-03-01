@@ -59,6 +59,10 @@ github.com/opentracing/opentracing-go/ext
 github.com/opentracing/opentracing-go/log
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
+# github.com/spf13/afero v1.3.0
+## explicit
+github.com/spf13/afero
+github.com/spf13/afero/mem
 # github.com/stretchr/testify v1.7.0
 ## explicit
 github.com/stretchr/testify/assert
