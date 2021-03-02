@@ -7,42 +7,17 @@ import (
 
 	"github.com/golang/mock/gomock"
 
+	"github.com/puppetlabs/pe-sdk-go/json"
+
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client/operations"
 	mock_operations "github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client/operations/testing"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/models"
 	mock_api "github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/testing"
 	match "github.com/puppetlabs/pe-sdk-go/app/puppet-code/testing"
-	mock_token "github.com/puppetlabs/pe-sdk-go/token/testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestRunDeployFailsIfNoToken(t *testing.T) {
-	assert := assert.New(t)
-	errorMessage := "Code Manager requires a token, please use `puppet access login` to generate a token"
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	token := mock_token.NewMockToken(ctrl)
-	api := mock_api.NewMockClient(ctrl)
-
-	args := DeployArgs{
-		DryRun:          true,
-		AllEnvironments: true,
-		Wait:            true,
-		Environments:    []string{"environment"},
-	}
-
-	token.EXPECT().Read().Return("", errors.New(errorMessage))
-
-	puppetCode := New()
-	puppetCode.Token = token
-	puppetCode.Client = api
-	_, receivedError := puppetCode.DeployWithErrorDetails(&args)
-	assert.EqualError(receivedError, errorMessage)
-}
 
 func TestRunDeployFailsIfNoClient(t *testing.T) {
 	assert := assert.New(t)
@@ -51,9 +26,7 @@ func TestRunDeployFailsIfNoClient(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	token := mock_token.NewMockToken(ctrl)
 	api := mock_api.NewMockClient(ctrl)
-
 	args := DeployArgs{
 		DryRun:          true,
 		AllEnvironments: true,
@@ -61,11 +34,10 @@ func TestRunDeployFailsIfNoClient(t *testing.T) {
 		Environments:    []string{"environment"},
 	}
 
-	token.EXPECT().Read().Return("my token", nil)
 	api.EXPECT().GetClient().Return(nil, errors.New(errorMessage))
 
 	puppetCode := New()
-	puppetCode.Token = token
+	puppetCode.Token = "my token"
 	puppetCode.Client = api
 	_, receivedError := puppetCode.DeployWithErrorDetails(&args)
 	assert.EqualError(receivedError, errorMessage)
@@ -78,7 +50,6 @@ func TestDeployStatusSucces(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetCode{
 		Operations: operationsMock,
@@ -91,7 +62,6 @@ func TestDeployStatusSucces(t *testing.T) {
 	}
 
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	result := operations.NewDeployOK()
 
@@ -107,11 +77,11 @@ func TestDeployStatusSucces(t *testing.T) {
 	operationsMock.EXPECT().Deploy(deployParamenters, match.XAuthenticationWriter(t, "my token")).Return(result, nil)
 
 	puppetCode := New()
-	puppetCode.Token = token
+	puppetCode.Token = "my token"
 	puppetCode.Client = api
 	res, err := puppetCode.DeployWithErrorDetails(&args)
-
-	assert.Equal(operations.NewDeployOK(), res)
+	expected, _ := json.MarshalIndent(result.Payload, "", "  ")
+	assert.Equal(expected, res)
 	assert.Nil(err)
 }
 
@@ -122,7 +92,6 @@ func TestDeployStatusWithError(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetCode{
 		Operations: operationsMock,
@@ -135,7 +104,6 @@ func TestDeployStatusWithError(t *testing.T) {
 	}
 
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	result := operations.NewDeployDefault(404)
 	result.Payload = &models.Error{
@@ -155,7 +123,7 @@ func TestDeployStatusWithError(t *testing.T) {
 	operationsMock.EXPECT().Deploy(deployParamenters, match.XAuthenticationWriter(t, "my token")).Return(nil, result)
 
 	puppetCode := New()
-	puppetCode.Token = token
+	puppetCode.Token = "my token"
 	puppetCode.Client = api
 	res, err := puppetCode.DeployWithErrorDetails(&args)
 

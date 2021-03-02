@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/puppetlabs/pe-sdk-go/json"
 
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client/operations"
@@ -13,29 +14,9 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/models"
 	mock_api "github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/testing"
 	match "github.com/puppetlabs/pe-sdk-go/app/puppet-code/testing"
-	mock_token "github.com/puppetlabs/pe-sdk-go/token/testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestRunStatusFailsIfNoToken(t *testing.T) {
-	assert := assert.New(t)
-	errorMessage := "Code Manager requires a token, please use `puppet access login` to generate a token"
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	token := mock_token.NewMockToken(ctrl)
-	api := mock_api.NewMockClient(ctrl)
-
-	token.EXPECT().Read().Return("", errors.New(errorMessage))
-
-	puppetCode := New()
-	puppetCode.Token = token
-	puppetCode.Client = api
-	_, receivedError := puppetCode.GetStatusWithErrorDetails()
-	assert.EqualError(receivedError, errorMessage)
-}
 
 func TestRunStatusFailsIfNoClient(t *testing.T) {
 	assert := assert.New(t)
@@ -43,15 +24,11 @@ func TestRunStatusFailsIfNoClient(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-
-	token := mock_token.NewMockToken(ctrl)
 	api := mock_api.NewMockClient(ctrl)
-
-	token.EXPECT().Read().Return("my token", nil)
 	api.EXPECT().GetClient().Return(nil, errors.New(errorMessage))
 
 	puppetCode := New()
-	puppetCode.Token = token
+	puppetCode.Token = "my token"
 	puppetCode.Client = api
 	_, receivedError := puppetCode.GetStatusWithErrorDetails()
 	assert.EqualError(receivedError, errorMessage)
@@ -64,13 +41,11 @@ func TestRunStatusSucces(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetCode{
 		Operations: operationsMock,
 	}
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	result := &operations.GetStatusOK{
 		Payload: "ok",
@@ -80,11 +55,11 @@ func TestRunStatusSucces(t *testing.T) {
 	operationsMock.EXPECT().GetStatus(getStatusParameters, match.XAuthenticationWriter(t, "my token")).Return(result, nil)
 
 	puppetCode := New()
-	puppetCode.Token = token
+	puppetCode.Token = "my token"
 	puppetCode.Client = api
 	res, err := puppetCode.GetStatusWithErrorDetails()
-
-	assert.Equal("ok", res.Payload)
+	expected, _ := json.MarshalIndent(result.Payload, "", "  ")
+	assert.Equal(expected, res)
 	assert.Nil(err)
 }
 
@@ -95,13 +70,11 @@ func TestRunStatusError(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetCode{
 		Operations: operationsMock,
 	}
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	result := operations.NewGetStatusDefault(404)
 	result.Payload = &models.Error{
@@ -113,7 +86,7 @@ func TestRunStatusError(t *testing.T) {
 	operationsMock.EXPECT().GetStatus(getStatusParameters, match.XAuthenticationWriter(t, "my token")).Return(nil, result)
 
 	puppetCode := New()
-	puppetCode.Token = token
+	puppetCode.Token = "my token"
 	puppetCode.Client = api
 	res, err := puppetCode.GetStatusWithErrorDetails()
 

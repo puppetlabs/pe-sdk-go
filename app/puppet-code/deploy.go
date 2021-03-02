@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"os"
 
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client/operations"
@@ -12,7 +12,7 @@ import (
 )
 
 // DeployWithErrorDetails will execute a deploy command and add error details to the error text
-func (puppetCode *PuppetCode) DeployWithErrorDetails(args *DeployArgs) (*operations.DeployOK, error) {
+func (puppetCode *PuppetCode) DeployWithErrorDetails(args *DeployArgs) ([]byte, error) {
 	resp, err := puppetCode.deploy(args)
 	if err != nil {
 		if du, ok := err.(*operations.DeployDefault); ok {
@@ -20,21 +20,18 @@ func (puppetCode *PuppetCode) DeployWithErrorDetails(args *DeployArgs) (*operati
 				log.Debug(err.Error())
 				err = fmt.Errorf("[POST /deploys][%d] %v\n%v", du.Code(), du.Payload.Msg, json.PrettyPrintPayload(du.Payload.Details))
 			}
+
 		}
+		return nil, err
 	}
-	return resp, err
+	output, err := json.MarshalIndent(resp.Payload, "", "  ")
+	return output, err
 }
 
 func (puppetCode *PuppetCode) deploy(args *DeployArgs) (*operations.DeployOK, error) {
 	deployConfig := puppetCode.getDeployConfig(args)
 
-	stringToken, err := puppetCode.Token.Read()
-	if err != nil {
-		log.Debug(err.Error())
-		err = errors.New("Code Manager requires a token, please use `puppet access login` to generate a token")
-		return nil, err
-	}
-	aPIKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", stringToken)
+	aPIKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", puppetCode.Token)
 
 	client, err := puppetCode.Client.GetClient()
 	if err != nil {
@@ -64,4 +61,20 @@ type DeployArgs struct {
 	AllEnvironments bool
 	Wait            bool
 	Environments    []string
+}
+
+func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems0) {
+	fmt.Fprintf(os.Stderr, "Found %d environments.\n", len(payload))
+
+	if args.DryRun {
+		separator := ""
+		environments := ""
+		for _, v := range payload {
+			environments = environments + separator + v.Environment
+			separator = ", "
+		}
+		log.Info(fmt.Sprintf("Found the following environments: %s", environments))
+		return
+	}
+	json.WritePayload(os.Stdout, payload)
 }
