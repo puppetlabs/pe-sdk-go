@@ -105,7 +105,8 @@ func TestRunExportSucces(t *testing.T) {
 	puppetDb.Token = token
 	puppetDb.Client = api
 
-	_, err := puppetDb.GetExportFile(filePath, "none")
+	res, err := puppetDb.GetExportFile(filePath, "none")
+	assert.Equal("<nil>", res)
 	assert.NoError(err)
 }
 
@@ -147,6 +148,6 @@ func TestRunExportError(t *testing.T) {
 	puppetDb.Client = api
 	res, err := puppetDb.GetExportFile(filePath, "none")
 
-	assert.Nil(res)
+	assert.Equal("", res)
 	assert.EqualError(err, "[GET /pdb/admin/v1/archive][404] getExport default  &{Details:details Kind: Msg:error message}")
 }

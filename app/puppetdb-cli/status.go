@@ -10,7 +10,7 @@ import (
 )
 
 // GetStatus queries the status endpoint of a puppetdb instance
-func (puppetDb *PuppetDb) GetStatus() (*operations.GetStatusOK, error) {
+func (puppetDb *PuppetDb) GetStatus() (interface{}, error) {
 	stringToken, err := puppetDb.Token.Read()
 	if err != nil {
 		log.Debug(err.Error())
@@ -22,5 +22,9 @@ func (puppetDb *PuppetDb) GetStatus() (*operations.GetStatusOK, error) {
 	}
 	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", stringToken)
 	getStatusParameters := operations.NewGetStatusParamsWithContext(context.Background())
-	return client.Operations.GetStatus(getStatusParameters, apiKeyHeaderAuth)
+	response, err := client.Operations.GetStatus(getStatusParameters, apiKeyHeaderAuth)
+	if err != nil {
+		return nil, err
+	}
+	return response.Payload, err
 }

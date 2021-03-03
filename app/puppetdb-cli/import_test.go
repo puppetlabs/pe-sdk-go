@@ -147,6 +147,6 @@ func TestRunImportError(t *testing.T) {
 	puppetDb.Client = api
 
 	res, err := puppetDb.PostImportFile(filePath)
-	assert.Nil(res)
+	assert.Equal(false, res)
 	assert.EqualError(err, "[POST /pdb/admin/v1/archive][404] postImport default  &{Details:details Kind: Msg:error message}")
 }

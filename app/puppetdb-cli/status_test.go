@@ -65,7 +65,7 @@ func TestRunStatusSucces(t *testing.T) {
 	puppetDb.Client = api
 	res, err := puppetDb.GetStatus()
 
-	assert.Equal("ok", res.Payload)
+	assert.Equal("ok", res)
 	assert.Nil(err)
 }
 

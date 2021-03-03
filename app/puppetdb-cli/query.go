@@ -14,7 +14,7 @@ import (
 )
 
 // QueryWithErrorDetails performs a pdb query and prints error details if any
-func (puppetDb *PuppetDb) QueryWithErrorDetails(args string) (*operations.GetQueryOK, error) {
+func (puppetDb *PuppetDb) QueryWithErrorDetails(args string) (interface{}, error) {
 
 	resp, err := puppetDb.query(args)
 	if err != nil {
@@ -30,8 +30,9 @@ func (puppetDb *PuppetDb) QueryWithErrorDetails(args string) (*operations.GetQue
 				err = fmt.Errorf("[GET /pdb/query/v4][%d] getQuery default: %+v\n%v", du.Code(), du.Payload.Msg, puppetdbjson.PrettyPrintPayload(du.Payload.Details))
 			}
 		}
+		return "", err
 	}
-	return resp, err
+	return resp.Payload, err
 }
 
 func (puppetDb *PuppetDb) query(args string) (*operations.GetQueryOK, error) {

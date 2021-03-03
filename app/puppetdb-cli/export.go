@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/client/operations"
 	"github.com/puppetlabs/pe-sdk-go/log"
@@ -21,7 +22,7 @@ func (puppetDb *PuppetDb) createExportFile(filePath string) (afero.File, error) 
 }
 
 // GetExportFile queries the export endpoint of a puppet-db instance and saves the result in a file
-func (puppetDb *PuppetDb) GetExportFile(filePath, anonymizationProfile string) (*operations.GetExportOK, error) {
+func (puppetDb *PuppetDb) GetExportFile(filePath, anonymizationProfile string) (string, error) {
 	stringToken, err := puppetDb.Token.Read()
 	if err != nil {
 		log.Debug(err.Error())
@@ -29,12 +30,12 @@ func (puppetDb *PuppetDb) GetExportFile(filePath, anonymizationProfile string) (
 
 	client, err := puppetDb.Client.GetClient()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	file, err := puppetDb.createExportFile(filePath)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", stringToken)
@@ -43,6 +44,9 @@ func (puppetDb *PuppetDb) GetExportFile(filePath, anonymizationProfile string) (
 	result, err := client.Operations.GetExport(getExportParameters, apiKeyHeaderAuth, file)
 	if err != nil {
 		appFS.Remove(filePath)
+		return "", err
 	}
-	return result, err
+
+	output := fmt.Sprint(result.Payload)
+	return output, err
 }
