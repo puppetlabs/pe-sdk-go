@@ -12,5 +12,11 @@ swagger generate client \
 	--target=${GIT_ROOT}/app/puppet-access/api \
 	--spec=${GIT_ROOT}/app/puppet-access/api/api.yaml \
 	--name=puppet-access
+	
+swagger generate client \
+	--target=${GIT_ROOT}/app/puppet-code/api \
+	--spec=${GIT_ROOT}/app/puppet-code/api/api.yaml \
+	--name=puppet-code
+
 
 printf "%b" "${NO_COLOR}"

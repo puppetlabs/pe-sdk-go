@@ -1,0 +1,91 @@
+swagger: "2.0"
+info:
+  title: 'puppet-code'
+  version: '0.0.1'
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-Auth-Token
+security:
+  - APIKeyHeader: []
+paths:
+  /status:
+    get:
+      operationId: 'getStatus'
+      produces:
+      - 'text/json'
+      responses:
+        200:
+          description: 'returns code-manager status'
+          schema:
+            description: 'code-manager status'
+            type: object
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /deploys:
+    post:
+      operationId: 'Deploy'
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              environments:
+                type: array
+                x-omitempty: true
+                items:
+                  type: string
+              deploy-all:
+                type: boolean
+              wait:
+                type: boolean
+              dry_run:
+                type: boolean
+      responses:
+        200:
+          description: deploy command result
+          schema:
+            description: 'deploy command status'
+            type: array
+            items:
+              type: object
+              properties:
+                environment:
+                  type: string
+                  description: The name of the environment queued or deployed.
+                id:
+                  type: integer
+                  description: Identifies the queue order of the code deploy request.
+                status:
+                  type: string
+                  description: The status of the code deployment for that environment.
+                deploy-signature:
+                  type: string
+                  description: The commit SHA of the control repo that Code Manager used to deploy code in that environment.
+                file-sync:
+                  type: object
+                  description: Commit SHAs used internally by file sync to identify the code synced to the code staging directory
+                error:
+                  $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Error:
+    type: object
+    properties:
+      kind:
+        type: string
+      msg:
+        type: string
+      details:
+        type: object
