@@ -10,18 +10,10 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/client/operations"
 
 	"github.com/puppetlabs/pe-sdk-go/json"
-	"github.com/puppetlabs/pe-sdk-go/log"
 )
 
 // PostImportFile uploads a puppetdb archive to the import endpoint of a puppet-db instance
 func (puppetDb *PuppetDb) PostImportFile(filePath string) (bool, error) {
-	//var newOutput string
-	stringToken, err := puppetDb.Token.Read()
-	if err != nil {
-		log.Debug(err.Error())
-		return false, err
-	}
-
 	client, err := puppetDb.Client.GetClient()
 	if err != nil {
 		return false, err
@@ -32,7 +24,7 @@ func (puppetDb *PuppetDb) PostImportFile(filePath string) (bool, error) {
 		return false, err
 	}
 	fmt.Println(file.Name())
-	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", stringToken)
+	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", puppetDb.Token)
 	postImportParameters := operations.NewPostImportParamsWithContext(context.Background())
 	postImportParameters.SetArchive(file)
 	resp, err := client.Operations.PostImport(postImportParameters, apiKeyHeaderAuth)

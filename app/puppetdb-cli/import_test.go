@@ -15,7 +15,6 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/models"
 	mock_api "github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/testing"
 	match "github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/testing"
-	mock_token "github.com/puppetlabs/pe-sdk-go/token/testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,14 +27,12 @@ func TestRunImportFailsIfNoClient(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	token := mock_token.NewMockToken(ctrl)
 	api := mock_api.NewMockClient(ctrl)
 
-	token.EXPECT().Read().Return("my token", nil)
 	api.EXPECT().GetClient().Return(nil, errors.New(errorMessage))
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 
 	_, receivedError := puppetDb.PostImportFile(filePath)
@@ -50,7 +47,6 @@ func TestRunImportFailsIfFileIsAbsent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	token := mock_token.NewMockToken(ctrl)
 	api := mock_api.NewMockClient(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetdbCli{
@@ -58,14 +54,13 @@ func TestRunImportFailsIfFileIsAbsent(t *testing.T) {
 	}
 
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	fsmock := match.NewMockFs(ctrl)
 	appFS = fsmock
 	fsmock.EXPECT().Open(filePath).Return(nil, errors.New(errorMessage))
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 
 	_, receivedError := puppetDb.PostImportFile(filePath)
@@ -80,13 +75,11 @@ func TestRunImportSuccess(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetdbCli{
 		Operations: operationsMock,
 	}
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	resp := operations.NewPostImportOK().Payload
 	result := &operations.PostImportOK{
@@ -103,7 +96,7 @@ func TestRunImportSuccess(t *testing.T) {
 	operationsMock.EXPECT().PostImport(postImportParameters, match.XAuthenticationWriter(t, "my token")).Return(result, nil)
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 
 	_, err := puppetDb.PostImportFile(filePath)
@@ -118,13 +111,11 @@ func TestRunImportError(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetdbCli{
 		Operations: operationsMock,
 	}
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	result := operations.NewPostImportDefault(404)
 	result.Payload = &models.Error{
@@ -143,7 +134,7 @@ func TestRunImportError(t *testing.T) {
 	operationsMock.EXPECT().PostImport(postImportParameters, match.XAuthenticationWriter(t, "my token")).Return(nil, result)
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 
 	res, err := puppetDb.PostImportFile(filePath)

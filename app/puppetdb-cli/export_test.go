@@ -15,7 +15,6 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/models"
 	mock_api "github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/testing"
 	match "github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/testing"
-	mock_token "github.com/puppetlabs/pe-sdk-go/token/testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,14 +27,12 @@ func TestRunExportFailsIfNoClient(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	token := mock_token.NewMockToken(ctrl)
 	api := mock_api.NewMockClient(ctrl)
 
-	token.EXPECT().Read().Return("my token", nil)
 	api.EXPECT().GetClient().Return(nil, errors.New(errorMessage))
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 	_, receivedError := puppetDb.GetExportFile(filePath, "none")
 	assert.EqualError(receivedError, errorMessage)
@@ -49,7 +46,6 @@ func TestRunExportFailsIfFileCreationFails(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	token := mock_token.NewMockToken(ctrl)
 	api := mock_api.NewMockClient(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetdbCli{
@@ -57,14 +53,13 @@ func TestRunExportFailsIfFileCreationFails(t *testing.T) {
 	}
 
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	fsmock := match.NewMockFs(ctrl)
 	appFS = fsmock
 	fsmock.EXPECT().Create(filePath).Return(nil, errors.New(errorMessage))
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 	_, receivedError := puppetDb.GetExportFile(filePath, "none")
 	assert.EqualError(receivedError, errorMessage, "Archive file creation should fail")
@@ -78,13 +73,11 @@ func TestRunExportSucces(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetdbCli{
 		Operations: operationsMock,
 	}
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	var mockPayload io.Writer
 	result := &operations.GetExportOK{
@@ -102,7 +95,7 @@ func TestRunExportSucces(t *testing.T) {
 	operationsMock.EXPECT().GetExport(getExportParameters, match.XAuthenticationWriter(t, "my token"), archive).Return(result, nil)
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 
 	res, err := puppetDb.GetExportFile(filePath, "none")
@@ -118,13 +111,11 @@ func TestRunExportError(t *testing.T) {
 	defer ctrl.Finish()
 
 	api := mock_api.NewMockClient(ctrl)
-	token := mock_token.NewMockToken(ctrl)
 	operationsMock := mock_operations.NewMockClientService(ctrl)
 	client := &client.PuppetdbCli{
 		Operations: operationsMock,
 	}
 	api.EXPECT().GetClient().Return(client, nil)
-	token.EXPECT().Read().Return("my token", nil)
 
 	result := operations.NewGetExportDefault(404)
 	result.Payload = &models.Error{
@@ -144,7 +135,7 @@ func TestRunExportError(t *testing.T) {
 	operationsMock.EXPECT().GetExport(getExportParameters, match.XAuthenticationWriter(t, "my token"), gomock.Any()).Return(nil, result)
 
 	puppetDb := New()
-	puppetDb.Token = token
+	puppetDb.Token = "my token"
 	puppetDb.Client = api
 	res, err := puppetDb.GetExportFile(filePath, "none")
 

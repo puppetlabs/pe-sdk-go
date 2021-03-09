@@ -36,11 +36,6 @@ func (puppetDb *PuppetDb) QueryWithErrorDetails(args string) (interface{}, error
 }
 
 func (puppetDb *PuppetDb) query(args string) (*operations.GetQueryOK, error) {
-	stringToken, err := puppetDb.Token.Read()
-	if err != nil {
-		log.Debug(err.Error())
-	}
-
 	client, err := puppetDb.Client.GetClient()
 	if err != nil {
 		return nil, err
@@ -50,7 +45,7 @@ func (puppetDb *PuppetDb) query(args string) (*operations.GetQueryOK, error) {
 	if err != nil {
 		log.Debug("Cannot convert query to AST")
 	}
-	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", stringToken)
+	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", puppetDb.Token)
 
 	queryParameters := operations.NewGetQueryParamsWithContext(context.Background())
 	queryParameters.SetQuery(&args)

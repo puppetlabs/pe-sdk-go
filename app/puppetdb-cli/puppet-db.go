@@ -2,8 +2,6 @@ package app
 
 import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api"
-	"github.com/puppetlabs/pe-sdk-go/token"
-	"github.com/puppetlabs/pe-sdk-go/token/filetoken"
 	"github.com/spf13/afero"
 )
 
@@ -12,7 +10,7 @@ var appFS = afero.NewOsFs()
 // PuppetDb interface
 type PuppetDb struct {
 	URL     string
-	Token   token.Token
+	Token   string
 	Cacert  string
 	Cert    string
 	Key     string
@@ -21,15 +19,15 @@ type PuppetDb struct {
 }
 
 // NewWithConfig creates a puppet code application with configuration
-func NewWithConfig(url, cacert, cert, key, tokenFile string) *PuppetDb {
+func NewWithConfig(url, cacert, cert, key, token string) *PuppetDb {
 	return &PuppetDb{
 		URL:    url,
 		Cacert: cacert,
 		Cert:   cert,
 		Key:    key,
-		Token:  filetoken.NewFileToken(tokenFile),
+		Token:  token,
 
-		Client: api.NewClient(cacert, cert, key, url, tokenFile),
+		Client: api.NewClient(cacert, cert, key, url, token),
 	}
 }
 
@@ -43,7 +41,7 @@ func NewPuppetDbApp(version string) *PuppetDb {
 // New creates an unconfigured puppet-db application
 func New() *PuppetDb {
 	return &PuppetDb{
-		Token:  filetoken.NewFileToken(""),
+		Token:  "",
 		Client: api.NewClient("", "", "", "", ""),
 	}
 }
