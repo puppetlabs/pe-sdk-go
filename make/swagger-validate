@@ -10,5 +10,6 @@ printf "%b==> Validating swagger interface definition %b\n" "${OK_COLOR}" "${ERR
 
 swagger validate ${GIT_ROOT}/app/puppet-access/api/api.yaml
 swagger validate ${GIT_ROOT}/app/puppetdb-cli/api/api.yaml
+swagger validate ${GIT_ROOT}/app/puppet-code/api/api.yaml
 
 printf "%b" "${NO_COLOR}"
