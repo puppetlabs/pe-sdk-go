@@ -24,7 +24,7 @@ func (puppetCode *PuppetCode) DeployWithErrorDetails(args *DeployArgs) ([]byte, 
 		}
 		return nil, err
 	}
-	output, err := json.MarshalIndent(resp.Payload, "", "  ")
+	output := writeDeployResult(args, resp.Payload)
 	return output, err
 }
 
@@ -63,7 +63,7 @@ type DeployArgs struct {
 	Environments    []string
 }
 
-func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems0) {
+func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems0) []byte {
 	fmt.Fprintf(os.Stderr, "Found %d environments.\n", len(payload))
 
 	if args.DryRun {
@@ -74,7 +74,10 @@ func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems
 			separator = ", "
 		}
 		log.Info(fmt.Sprintf("Found the following environments: %s", environments))
-		return
 	}
-	json.WritePayload(os.Stdout, payload)
+	resultPayload, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		log.Error(err.Error())
+	}
+	return resultPayload
 }
