@@ -4,12 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"strconv"
-
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/client/operations"
-
-	"github.com/puppetlabs/pe-sdk-go/json"
 )
 
 // PostImportFile uploads a puppetdb archive to the import endpoint of a puppet-db instance
@@ -37,15 +33,6 @@ func (puppetDb *PuppetDb) PostImportFile(filePath string) (bool, error) {
 		return false, err
 	}
 
-	output, err := json.MarshalIndent(resp.Payload, "", "")
-	if err != nil {
-		return false, err
-	}
-
-	finalOutput, err := strconv.ParseBool(string(output)[:len(output)-1])
-	if err != nil {
-		return false, err
-	}
-	return finalOutput, err
+	return resp.Payload.Ok, err
 
 }

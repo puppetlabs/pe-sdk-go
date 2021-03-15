@@ -15,17 +15,17 @@ import (
 
 //SwaggerClient represents a puppetdb-cli swagger client
 type SwaggerClient struct {
-	cacert, cert, key, url, tokenFile string
+	cacert, cert, key, url, token string
 }
 
 //NewClient creates a new SwaggerClient
-func NewClient(cacert, cert, key, url, tokenFile string) Client {
+func NewClient(cacert, cert, key, url, token string) Client {
 	sc := SwaggerClient{
-		cacert:    cacert,
-		cert:      cert,
-		key:       key,
-		url:       url,
-		tokenFile: tokenFile,
+		cacert: cacert,
+		cert:   cert,
+		key:    key,
+		url:    url,
+		token:  token,
 	}
 	return &sc
 }
@@ -49,7 +49,7 @@ func supportedScheme(urlScheme string) bool {
 }
 
 func (sc *SwaggerClient) validateSchemeParameters(urlScheme string) error {
-	if urlScheme == "https" && (sc.tokenFile == "" && (sc.cert == "" || sc.key == "")) {
+	if urlScheme == "https" && (sc.token == "" && (sc.cert == "" || sc.key == "")) {
 		return &ArgError{"ssl requires a token, please use `puppet access login` to retrieve a token (alternatively use 'cert' and 'key' for whitelist validation)"}
 	}
 	return nil
