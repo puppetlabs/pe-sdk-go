@@ -1,0 +1,126 @@
+swagger: "2.0"
+info:
+  title: 'puppetdb-cli'
+  version: '0.0.1'
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-Auth-Token
+security:
+  - APIKeyHeader: []
+paths:
+  /status/v1/services:
+    get:
+      operationId: 'getStatus'
+      produces:
+      - 'text/json'
+      responses:
+        200:
+          description: 'returns trapperkeeper status of puppetdb'
+          schema:
+            description: 'puppetdb status'
+            type: object
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /pdb/admin/v1/archive:
+    post:
+      operationId: 'postImport'
+      parameters:
+        - in: formData
+          name: archive
+          type: file
+          description: 'puppetdb archive to upload'
+      consumes:
+      - 'multipart/form-data'
+      produces:
+      - 'text/json'
+      responses:
+        200:
+          description: 'imported'
+          schema:
+            description: 'puppetdb import'
+            type: object
+            properties:
+              ok:
+                type: boolean
+                description: 'whether the operation succeeded'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      operationId: 'getExport'
+      parameters:
+        - in: query
+          name: anonymization_profile
+          type: string
+      produces:
+      - 'application/gzip'
+      responses:
+        200:
+          description: 'returns gzipped archive of puppetdb data'
+          schema:
+            description: 'puppetdb export'
+            type: file
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /pdb/query/v4:
+    get:
+      operationId: 'getQuery'
+      parameters:
+        - in: query
+          name: query
+          type: string
+      produces:
+      - 'application/json'
+      responses:
+        200:
+          description: 'returns query response'
+          schema:
+            description: 'query response'
+            type: object
+        400:
+          description: PQL parse error response
+          schema:
+            description: 'PQL parse error'
+            type: string
+        403:
+          description: Permission denied response
+          schema:
+            description: 'Permission denied'
+            type: string
+        500:
+          description: Server error
+          schema:
+            $ref: '#/definitions/ServerError'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Error:
+    type: object
+    properties:
+      kind:
+        type: string
+      msg:
+        type: string
+      details:
+        type: object
+  ServerError:
+    type: object
+    properties:
+      cause0:
+        type: string
+      message:
+        type: string
+      url:
+        type: string
+      status:
+        type: string

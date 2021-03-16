@@ -8,6 +8,7 @@ require (
 	github.com/go-openapi/strfmt v0.20.0
 	github.com/go-openapi/swag v0.19.14
 	github.com/go-openapi/validate v0.20.2 // indirect
-	github.com/golang/mock v1.5.0
+	github.com/golang/mock v1.4.4
+	github.com/spf13/afero v1.3.0
 	github.com/stretchr/testify v1.7.0
 )

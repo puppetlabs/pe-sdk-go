@@ -2,6 +2,7 @@
 
 set -o errexit
 
+. make/include/flags
 . make/include/colors
 
 printf "%b==> Linting%b\n" "${OK_COLOR}" "${ERROR_COLOR}"

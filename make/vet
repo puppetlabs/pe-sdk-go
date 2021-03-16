@@ -4,7 +4,7 @@ set -o errexit
 
 GIT_ROOT=${GIT_ROOT:-$(git rev-parse --show-toplevel)}
 
-
+. make/include/flags
 . make/include/colors
 
 printf "%b==> Vetting %b\n" "${OK_COLOR}" "${ERROR_COLOR}"
