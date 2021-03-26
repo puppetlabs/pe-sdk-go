@@ -14,6 +14,8 @@ type PuppetDbCfg struct {
 	Cacert string
 	Cert   string
 	Key    string
+
+	UseCNVerification bool
 }
 
 // PuppetDb interface
@@ -27,11 +29,12 @@ type PuppetDb struct {
 // NewWithConfig creates a puppet code application with configuration
 func NewWithConfig(cfg PuppetDbCfg) *PuppetDb {
 	apiCfg := api.SwaggerClientCfg{
-		Cacert: cfg.Cacert,
-		Cert:   cfg.Cert,
-		Key:    cfg.Key,
-		URL:    cfg.URL,
-		Token:  cfg.Token,
+		Cacert:            cfg.Cacert,
+		Cert:              cfg.Cert,
+		Key:               cfg.Key,
+		URL:               cfg.URL,
+		Token:             cfg.Token,
+		UseCNVerification: cfg.UseCNVerification,
 	}
 
 	return &PuppetDb{
