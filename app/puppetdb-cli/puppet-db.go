@@ -7,27 +7,39 @@ import (
 
 var appFS = afero.NewOsFs()
 
+// PuppetDbCfg is a pupperDB client configuration
+type PuppetDbCfg struct {
+	URL    string
+	Token  string
+	Cacert string
+	Cert   string
+	Key    string
+
+	UseCNVerification bool
+}
+
 // PuppetDb interface
 type PuppetDb struct {
-	URL     string
 	Token   string
-	Cacert  string
-	Cert    string
-	Key     string
 	Version string
-	Client  api.Client
+
+	Client api.Client
 }
 
 // NewWithConfig creates a puppet code application with configuration
-func NewWithConfig(url, cacert, cert, key, token string) *PuppetDb {
-	return &PuppetDb{
-		URL:    url,
-		Cacert: cacert,
-		Cert:   cert,
-		Key:    key,
-		Token:  token,
+func NewWithConfig(cfg PuppetDbCfg) *PuppetDb {
+	apiCfg := api.SwaggerClientCfg{
+		Cacert:            cfg.Cacert,
+		Cert:              cfg.Cert,
+		Key:               cfg.Key,
+		URL:               cfg.URL,
+		Token:             cfg.Token,
+		UseCNVerification: cfg.UseCNVerification,
+	}
 
-		Client: api.NewClient(cacert, cert, key, url, token),
+	return &PuppetDb{
+		Token:  cfg.Token,
+		Client: api.NewClientWithConfig(apiCfg),
 	}
 }
 
@@ -42,6 +54,6 @@ func NewPuppetDbApp(version string) *PuppetDb {
 func New() *PuppetDb {
 	return &PuppetDb{
 		Token:  "",
-		Client: api.NewClient("", "", "", "", ""),
+		Client: api.NewClientWithConfig(api.SwaggerClientCfg{}),
 	}
 }
