@@ -13,21 +13,21 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
-//SwaggerClient represents a puppetdb-cli swagger client
-type SwaggerClient struct {
-	cacert, cert, key, url, token string
+//SwaggerClientCfg represents a puppetdb-cli swagger client cfg
+type SwaggerClientCfg struct {
+	Cacert, Cert, Key, URL, Token string
 }
 
-//NewClient creates a new SwaggerClient
-func NewClient(cacert, cert, key, url, token string) Client {
-	sc := SwaggerClient{
-		cacert: cacert,
-		cert:   cert,
-		key:    key,
-		url:    url,
-		token:  token,
+//SwaggerClient represents a puppetdb-cli swagger client
+type SwaggerClient struct {
+	SwaggerClientCfg
+}
+
+//NewClientWithConfig creates a new SwaggerClient
+func NewClientWithConfig(cfg SwaggerClientCfg) Client {
+	return &SwaggerClient{
+		cfg,
 	}
-	return &sc
 }
 
 //ArgError represents an argument error
@@ -49,7 +49,7 @@ func supportedScheme(urlScheme string) bool {
 }
 
 func (sc *SwaggerClient) validateSchemeParameters(urlScheme string) error {
-	if urlScheme == "https" && (sc.token == "" && (sc.cert == "" || sc.key == "")) {
+	if urlScheme == "https" && (sc.Token == "" && (sc.Cert == "" || sc.Key == "")) {
 		return &ArgError{"ssl requires a token, please use `puppet access login` to retrieve a token (alternatively use 'cert' and 'key' for whitelist validation)"}
 	}
 	return nil
@@ -57,7 +57,7 @@ func (sc *SwaggerClient) validateSchemeParameters(urlScheme string) error {
 
 //GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetdbCli, error) {
-	url, err := url.Parse(sc.url)
+	url, err := url.Parse(sc.URL)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (sc *SwaggerClient) GetClient() (*client.PuppetdbCli, error) {
 		return nil, err
 	}
 
-	httpclient, err := getHTTPClient(sc.cacert, sc.cert, sc.key)
+	httpclient, err := sc.getHTTPClient()
 	if err != nil {
 		return nil, err
 	}
@@ -81,11 +81,11 @@ func (sc *SwaggerClient) GetClient() (*client.PuppetdbCli, error) {
 	return client.New(openapitransport, strfmt.Default), nil
 }
 
-func getHTTPClient(cacert, cert, key string) (*http.Client, error) {
+func (sc *SwaggerClient) getHTTPClient() (*http.Client, error) {
 	tlsClientOptions := openapihttptransport.TLSClientOptions{
-		CA:          cacert,
-		Certificate: cert,
-		Key:         key,
+		CA:          sc.Cacert,
+		Certificate: sc.Cert,
+		Key:         sc.Key,
 	}
 	cfg, err := openapihttptransport.TLSClientAuth(tlsClientOptions)
 	if err != nil {

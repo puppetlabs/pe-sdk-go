@@ -12,12 +12,9 @@ func TestGetClientFailsIfNoUrl(t *testing.T) {
 	assert := assert.New(t)
 	errorMessage := "Invalid scheme for "
 
-	cacert := ""
-	cert := ""
-	key := ""
-	url := ""
-	token := ""
-	client := NewClient(cacert, cert, key, url, token)
+	swaggerCfg := SwaggerClientCfg{}
+	client := NewClientWithConfig(swaggerCfg)
+
 	_, receivedError := client.GetClient()
 	assert.EqualError(receivedError, errorMessage)
 }
@@ -25,12 +22,10 @@ func TestGetClientFailsIfNoUrl(t *testing.T) {
 func TestGetClientSuccessIfHTTP(t *testing.T) {
 	assert := assert.New(t)
 
-	cacert := ""
-	cert := ""
-	key := ""
-	url := "http://random3751.com"
-	token := ""
-	client := NewClient(cacert, cert, key, url, token)
+	swaggerCfg := SwaggerClientCfg{
+		URL: "http://random3751.com",
+	}
+	client := NewClientWithConfig(swaggerCfg)
 
 	_, receivedError := client.GetClient()
 	assert.NoError(receivedError)
@@ -40,12 +35,10 @@ func TestGetClientFailsIfHTTPSNoToken(t *testing.T) {
 	assert := assert.New(t)
 	errorMessage := "ssl requires a token, please use `puppet access login` to retrieve a token (alternatively use 'cert' and 'key' for whitelist validation)"
 
-	cacert := ""
-	cert := ""
-	key := ""
-	url := "https://random3751.com"
-	token := ""
-	client := NewClient(cacert, cert, key, url, token)
+	swaggerCfg := SwaggerClientCfg{
+		URL: "https://random3751.com",
+	}
+	client := NewClientWithConfig(swaggerCfg)
 
 	_, receivedError := client.GetClient()
 	assert.EqualError(receivedError, errorMessage)
@@ -54,12 +47,11 @@ func TestGetClientFailsIfHTTPSNoToken(t *testing.T) {
 func TestGetClientSuccessIfHTTPSWithToken(t *testing.T) {
 	assert := assert.New(t)
 
-	cacert := ""
-	cert := ""
-	key := ""
-	url := "https://random3751.com"
-	token := filepath.Join(testdata.FixturePath(), "token")
-	client := NewClient(cacert, cert, key, url, token)
+	swaggerCfg := SwaggerClientCfg{
+		URL:   "https://random3751.com",
+		Token: filepath.Join(testdata.FixturePath(), "token"),
+	}
+	client := NewClientWithConfig(swaggerCfg)
 
 	_, receivedError := client.GetClient()
 	assert.NoError(receivedError)
@@ -68,12 +60,13 @@ func TestGetClientSuccessIfHTTPSWithToken(t *testing.T) {
 func TestGetClientSuccessIfHTTPSWithCertAndKey(t *testing.T) {
 	assert := assert.New(t)
 
-	cacert := ""
-	cert := filepath.Join(testdata.FixturePath(), "cert.crt")
-	key := filepath.Join(testdata.FixturePath(), "private_key.key")
-	url := "https://random3751.com"
-	token := ""
-	client := NewClient(cacert, cert, key, url, token)
+	swaggerCfg := SwaggerClientCfg{
+		Cert: filepath.Join(testdata.FixturePath(), "cert.crt"),
+		Key:  filepath.Join(testdata.FixturePath(), "private_key.key"),
+		URL:  "http://random3751.com",
+	}
+
+	client := NewClientWithConfig(swaggerCfg)
 
 	_, receivedError := client.GetClient()
 	assert.NoError(receivedError)
@@ -82,12 +75,11 @@ func TestGetClientSuccessIfHTTPSWithCertAndKey(t *testing.T) {
 func TestGetClientFailsIfCannotParse(t *testing.T) {
 	assert := assert.New(t)
 
-	cacert := ""
-	cert := ""
-	key := ""
-	url := "§¶£¡:random.com"
-	token := ""
-	client := NewClient(cacert, cert, key, url, token)
+	swaggerCfg := SwaggerClientCfg{
+		URL: "§¶£¡:random.com",
+	}
+	client := NewClientWithConfig(swaggerCfg)
+
 	_, receivedError := client.GetClient()
 	assert.Error(receivedError)
 }
