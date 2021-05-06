@@ -3,16 +3,20 @@ package filetoken
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"github.com/spf13/afero"
+
 	"github.com/puppetlabs/pe-sdk-go/log"
 	"github.com/puppetlabs/pe-sdk-go/token"
 )
+
+var fs = afero.NewOsFs()
+var afs = &afero.Afero{Fs: fs}
 
 // fileToken struct
 type fileToken struct {
@@ -31,26 +35,45 @@ func (ft *fileToken) Read() (string, error) {
 	return ft.readToken()
 }
 
+func writeTempFile(dir string, content string) (string, error) {
+	tmpFile, err := afs.TempFile(dir, "temp")
+	if err != nil {
+		return "", err
+	}
+
+	defer tmpFile.Close()
+
+	_, err = tmpFile.WriteString(content)
+	if err != nil {
+		return "", err
+	}
+
+	return tmpFile.Name(), err
+}
+
 // Write ...
 func (ft *fileToken) Write(token string) error {
-	err := os.MkdirAll(filepath.Dir(ft.path), 0700)
+	err := fs.MkdirAll(filepath.Dir(ft.path), 0700)
 	if err != nil {
 		return err
 	}
 
-	file, err := os.Create(ft.path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	err = file.Chmod(os.FileMode(0600))
+	err = fs.Chmod(filepath.Dir(ft.path), 0700)
 	if err != nil {
 		return err
 	}
 
-	_, err = file.WriteString(token)
-	return err
+	tmpFile, err := writeTempFile(filepath.Dir(ft.path), token)
+	if err != nil {
+		return err
+	}
+
+	err = fs.Rename(tmpFile, ft.path)
+	if err != nil {
+		return err
+	}
+
+	return fs.Chmod(ft.path, 0600)
 }
 
 //DeleteFile deletes the token file
@@ -67,14 +90,14 @@ func (ft *fileToken) Delete(force bool) error {
 }
 
 func (ft *fileToken) deleteFile() error {
-	file, err := os.Lstat(ft.path)
+	file, err := os.Lstat(ft.path) // FIXME afero
 	if err != nil {
 		return err
 	}
 	if file.Mode()&os.ModeSymlink == os.ModeSymlink {
 		return errors.New("Cannot delete token because it is a symbolic link instead of a token file:" + ft.path)
 	}
-	err = os.Remove(ft.path)
+	err = fs.Remove(ft.path)
 	if err != nil {
 		return err
 	}
@@ -90,7 +113,7 @@ func getPath(path string) string {
 }
 
 func (ft *fileToken) readToken() (string, error) {
-	data, err := ioutil.ReadFile(ft.path)
+	data, err := afs.ReadFile(ft.path)
 	if err != nil {
 		return "", err
 	}

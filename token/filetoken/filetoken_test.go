@@ -4,6 +4,14 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/golang/mock/gomock"
+
+	"errors"
+	"os"
+
+	"github.com/spf13/afero"
+
+	match "github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/testing"
 	"github.com/puppetlabs/pe-sdk-go/token/testdata"
 	"github.com/stretchr/testify/assert"
 )
@@ -93,5 +101,158 @@ func TestDefaultPath(t *testing.T) {
 	//assert
 
 	test.NotEqual("", path)
+
+}
+
+func TestWrite_MkdirAllFails(t *testing.T) {
+	test := assert.New(t)
+	path := filepath.Join(testdata.FixturePath(), "token")
+	errorMessage := "couldn't create directory"
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fsmock := match.NewMockFs(ctrl)
+	fs = fsmock
+
+	fsmock.EXPECT().MkdirAll(testdata.FixturePath(), os.FileMode(0700)).Return(errors.New(errorMessage))
+	fileToken := NewFileToken(path)
+
+	err := fileToken.Write("ok")
+
+	test.EqualError(err, errorMessage)
+
+}
+
+func TestWrite_SetDirPermissionsFails(t *testing.T) {
+	test := assert.New(t)
+	path := filepath.Join(testdata.FixturePath(), "token")
+	errorMessage := "couldn't set permissions for the specified path"
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fsmock := match.NewMockFs(ctrl)
+	fs = fsmock
+
+	fsmock.EXPECT().MkdirAll(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().Chmod(testdata.FixturePath(), os.FileMode(0700)).Return(errors.New(errorMessage))
+	fileToken := NewFileToken(path)
+
+	err := fileToken.Write("ok")
+
+	test.EqualError(err, errorMessage)
+
+}
+
+func TestWrite_WriteFileSecurelyFails(t *testing.T) {
+	test := assert.New(t)
+	path := filepath.Join(testdata.FixturePath(), "token")
+	errorMessage := "couldn't set permissions for the specified path"
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fsmock := match.NewMockFs(ctrl)
+	fs = fsmock
+	afs = &afero.Afero{Fs: fs}
+
+	fsmock.EXPECT().MkdirAll(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().Chmod(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().OpenFile(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, errors.New(errorMessage))
+
+	fileToken := NewFileToken(path)
+
+	err := fileToken.Write("ok")
+
+	test.EqualError(err, errorMessage)
+
+}
+
+func TestWrite_RenameFails(t *testing.T) {
+	test := assert.New(t)
+	path := filepath.Join(testdata.FixturePath(), "token")
+	errorMessage := "couldn't set permissions for the specified path"
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fsmock := match.NewMockFs(ctrl)
+	fileMock := match.NewMockFile(ctrl)
+	fs = fsmock
+	afs = &afero.Afero{Fs: fs}
+
+	fsmock.EXPECT().MkdirAll(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().Chmod(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().OpenFile(gomock.Any(), gomock.Any(), gomock.Any()).Return(fileMock, nil)
+	fsmock.EXPECT().Rename("tmpFileName", path).Return(errors.New(errorMessage))
+	fileMock.EXPECT().WriteString("ok").Return(2, nil)
+	fileMock.EXPECT().Name().Return("tmpFileName")
+	fileMock.EXPECT().Close()
+
+	fileToken := NewFileToken(path)
+
+	err := fileToken.Write("ok")
+
+	test.EqualError(err, errorMessage)
+
+}
+
+func TestWrite_ChmodFails(t *testing.T) {
+	test := assert.New(t)
+	path := filepath.Join(testdata.FixturePath(), "token")
+	errorMessage := "couldn't set permissions for the specified path"
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fsmock := match.NewMockFs(ctrl)
+	fileMock := match.NewMockFile(ctrl)
+	fs = fsmock
+	afs = &afero.Afero{Fs: fs}
+
+	fsmock.EXPECT().MkdirAll(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().Chmod(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().OpenFile(gomock.Any(), gomock.Any(), gomock.Any()).Return(fileMock, nil)
+	fsmock.EXPECT().Rename("tmpFileName", path).Return(nil)
+	fsmock.EXPECT().Chmod(path, os.FileMode(0600)).Return(errors.New(errorMessage))
+	fileMock.EXPECT().WriteString("ok").Return(2, nil)
+	fileMock.EXPECT().Name().Return("tmpFileName")
+	fileMock.EXPECT().Close()
+
+	fileToken := NewFileToken(path)
+
+	err := fileToken.Write("ok")
+
+	test.EqualError(err, errorMessage)
+
+}
+
+func TestWrite_Success(t *testing.T) {
+	test := assert.New(t)
+	path := filepath.Join(testdata.FixturePath(), "token")
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fsmock := match.NewMockFs(ctrl)
+	fileMock := match.NewMockFile(ctrl)
+	fs = fsmock
+	afs = &afero.Afero{Fs: fs}
+
+	fsmock.EXPECT().MkdirAll(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().Chmod(testdata.FixturePath(), os.FileMode(0700)).Return(nil)
+	fsmock.EXPECT().OpenFile(gomock.Any(), gomock.Any(), gomock.Any()).Return(fileMock, nil)
+	fsmock.EXPECT().Rename("tmpFileName", path).Return(nil)
+	fsmock.EXPECT().Chmod(path, os.FileMode(0600)).Return(nil)
+	fileMock.EXPECT().WriteString("ok").Return(2, nil)
+	fileMock.EXPECT().Name().Return("tmpFileName")
+	fileMock.EXPECT().Close()
+
+	fileToken := NewFileToken(path)
+
+	err := fileToken.Write("ok")
+
+	test.NoError(err)
 
 }
