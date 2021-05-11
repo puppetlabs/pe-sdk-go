@@ -90,17 +90,22 @@ func (ft *fileToken) Delete(force bool) error {
 }
 
 func (ft *fileToken) deleteFile() error {
-	file, err := os.Lstat(ft.path) // FIXME afero
-	if err != nil {
+	if lfs, ok := fs.(afero.Lstater); ok {
+		//underlying implementation supports symlink
+		statFile, isLstat, err := lfs.LstatIfPossible(ft.path)
+		if err != nil {
+			return err
+		}
+
+		if isLstat && (statFile.Mode()&os.ModeSymlink == os.ModeSymlink) {
+			return errors.New("Cannot delete token because it is a symbolic link instead of a token file:" + ft.path)
+		}
+	}
+
+	if err := fs.Remove(ft.path); err != nil {
 		return err
 	}
-	if file.Mode()&os.ModeSymlink == os.ModeSymlink {
-		return errors.New("Cannot delete token because it is a symbolic link instead of a token file:" + ft.path)
-	}
-	err = fs.Remove(ft.path)
-	if err != nil {
-		return err
-	}
+
 	fmt.Println("Token file deleted")
 	return nil
 }
