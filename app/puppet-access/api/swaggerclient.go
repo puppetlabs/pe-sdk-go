@@ -32,9 +32,18 @@ func NewClient(login, password, lifetime, url, label, cacert string) Client {
 
 //GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetAccess, error) {
+	if sc.url == "" {
+		err := fmt.Errorf("Please provide the service URL. For example, `puppet-access login [username] --service-url https://<HOSTNAME OF PUPPET ENTERPRISE CONSOLE>:4433/rbac-ap`")
+		return nil, err
+	}
 
 	url, err := url.Parse(sc.url)
 	if err != nil {
+		return nil, err
+	}
+
+	if url.Scheme != "http" && url.Scheme != "https" {
+		err = fmt.Errorf("Unsupported protocol scheme: %v", url.Scheme)
 		return nil, err
 	}
 
