@@ -35,11 +35,11 @@ func TestRunLoginFailsIfNoClient(t *testing.T) {
 func TestRunLoginFailure(t *testing.T) {
 	assert := assert.New(t)
 
-	errorMessage := "Received unexpected error:"
 	login := "username"
 	password := "pass"
 	lifetime := "10m"
 	label := "test_token"
+	errorMessage := "Salam"
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -71,7 +71,7 @@ func TestRunLoginFailure(t *testing.T) {
 
 	_, receivedError := puppetAccess.Login()
 
-	assert.EqualError(receivedError, errorMessage)
+	assert.EqualError(receivedError, "Unknown error: "+errorMessage)
 }
 
 func TestRunLoginSuccess(t *testing.T) {

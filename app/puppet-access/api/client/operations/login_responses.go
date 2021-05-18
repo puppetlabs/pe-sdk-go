@@ -31,6 +31,18 @@ func (o *LoginReader) ReadResponse(response runtime.ClientResponse, consumer run
 			return nil, err
 		}
 		return result, nil
+	case 400:
+		result := NewLoginBadRequest()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
+	case 401:
+		result := NewLoginUnauthorized()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	default:
 		result := NewLoginDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -75,6 +87,70 @@ func (o *LoginOK) readResponse(response runtime.ClientResponse, consumer runtime
 	return nil
 }
 
+// NewLoginBadRequest creates a LoginBadRequest with default headers values
+func NewLoginBadRequest() *LoginBadRequest {
+	return &LoginBadRequest{}
+}
+
+/* LoginBadRequest describes a response with status code 400, with default header values.
+
+Bad request
+*/
+type LoginBadRequest struct {
+	Payload *models.Error
+}
+
+func (o *LoginBadRequest) Error() string {
+	return fmt.Sprintf("[POST /auth/token][%d] loginBadRequest  %+v", 400, o.Payload)
+}
+func (o *LoginBadRequest) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *LoginBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewLoginUnauthorized creates a LoginUnauthorized with default headers values
+func NewLoginUnauthorized() *LoginUnauthorized {
+	return &LoginUnauthorized{}
+}
+
+/* LoginUnauthorized describes a response with status code 401, with default header values.
+
+Authorization error
+*/
+type LoginUnauthorized struct {
+	Payload *models.Error
+}
+
+func (o *LoginUnauthorized) Error() string {
+	return fmt.Sprintf("[POST /auth/token][%d] loginUnauthorized  %+v", 401, o.Payload)
+}
+func (o *LoginUnauthorized) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *LoginUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
 // NewLoginDefault creates a LoginDefault with default headers values
 func NewLoginDefault(code int) *LoginDefault {
 	return &LoginDefault{
@@ -89,7 +165,7 @@ Unexpected error
 type LoginDefault struct {
 	_statusCode int
 
-	Payload *models.Error
+	Payload string
 }
 
 // Code gets the status code for the login default response
@@ -100,16 +176,14 @@ func (o *LoginDefault) Code() int {
 func (o *LoginDefault) Error() string {
 	return fmt.Sprintf("[POST /auth/token][%d] login default  %+v", o._statusCode, o.Payload)
 }
-func (o *LoginDefault) GetPayload() *models.Error {
+func (o *LoginDefault) GetPayload() string {
 	return o.Payload
 }
 
 func (o *LoginDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Error)
-
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 

@@ -36,23 +36,18 @@ func (m *MockClientService) EXPECT() *MockClientServiceMockRecorder {
 }
 
 // Login mocks base method
-func (m *MockClientService) Login(params *operations.LoginParams, opts ...operations.ClientOption) (*operations.LoginOK, error) {
+func (m *MockClientService) Login(params *operations.LoginParams) (*operations.LoginOK, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{params}
-	for _, a := range opts {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Login", varargs...)
+	ret := m.ctrl.Call(m, "Login", params)
 	ret0, _ := ret[0].(*operations.LoginOK)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Login indicates an expected call of Login
-func (mr *MockClientServiceMockRecorder) Login(params interface{}, opts ...interface{}) *gomock.Call {
+func (mr *MockClientServiceMockRecorder) Login(params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{params}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockClientService)(nil).Login), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockClientService)(nil).Login), params)
 }
 
 // SetTransport mocks base method

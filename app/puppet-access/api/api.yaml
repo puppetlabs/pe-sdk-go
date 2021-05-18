@@ -22,10 +22,18 @@ paths:
             properties:
               token:
                 type: string
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error'
+        401:
+          description: Authorization error
+          schema:
+            $ref: '#/definitions/Error'
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            type: string
 
 definitions:
   Error:
