@@ -6,6 +6,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -47,7 +48,7 @@ func NewPostImportOK() *PostImportOK {
 	return &PostImportOK{}
 }
 
-/*PostImportOK handles this case with default header values.
+/* PostImportOK describes a response with status code 200, with default header values.
 
 imported
 */
@@ -58,7 +59,6 @@ type PostImportOK struct {
 func (o *PostImportOK) Error() string {
 	return fmt.Sprintf("[POST /pdb/admin/v1/archive][%d] postImportOK  %+v", 200, o.Payload)
 }
-
 func (o *PostImportOK) GetPayload() *PostImportOKBody {
 	return o.Payload
 }
@@ -82,7 +82,7 @@ func NewPostImportDefault(code int) *PostImportDefault {
 	}
 }
 
-/*PostImportDefault handles this case with default header values.
+/* PostImportDefault describes a response with status code -1, with default header values.
 
 Unexpected error
 */
@@ -100,7 +100,6 @@ func (o *PostImportDefault) Code() int {
 func (o *PostImportDefault) Error() string {
 	return fmt.Sprintf("[POST /pdb/admin/v1/archive][%d] postImport default  %+v", o._statusCode, o.Payload)
 }
-
 func (o *PostImportDefault) GetPayload() *models.Error {
 	return o.Payload
 }
@@ -128,6 +127,11 @@ type PostImportOKBody struct {
 
 // Validate validates this post import o k body
 func (o *PostImportOKBody) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this post import o k body based on context it is used
+func (o *PostImportOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

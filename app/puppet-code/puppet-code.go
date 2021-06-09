@@ -40,8 +40,3 @@ func New() *PuppetCode {
 		Client: api.NewClient(api.SwaggerClientCfg{}),
 	}
 }
-
-// EnableCN enables the CN verification
-func (pc *PuppetCode) EnableCN() {
-	pc.Client.EnableCN()
-}

@@ -12,30 +12,30 @@ import (
 	operations "github.com/puppetlabs/pe-sdk-go/app/puppet-access/api/client/operations"
 )
 
-// MockClientService is a mock of ClientService interface
+// MockClientService is a mock of ClientService interface.
 type MockClientService struct {
 	ctrl     *gomock.Controller
 	recorder *MockClientServiceMockRecorder
 }
 
-// MockClientServiceMockRecorder is the mock recorder for MockClientService
+// MockClientServiceMockRecorder is the mock recorder for MockClientService.
 type MockClientServiceMockRecorder struct {
 	mock *MockClientService
 }
 
-// NewMockClientService creates a new mock instance
+// NewMockClientService creates a new mock instance.
 func NewMockClientService(ctrl *gomock.Controller) *MockClientService {
 	mock := &MockClientService{ctrl: ctrl}
 	mock.recorder = &MockClientServiceMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockClientService) EXPECT() *MockClientServiceMockRecorder {
 	return m.recorder
 }
 
-// Login mocks base method
+// Login mocks base method.
 func (m *MockClientService) Login(params *operations.LoginParams) (*operations.LoginOK, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", params)
@@ -44,19 +44,19 @@ func (m *MockClientService) Login(params *operations.LoginParams) (*operations.L
 	return ret0, ret1
 }
 
-// Login indicates an expected call of Login
+// Login indicates an expected call of Login.
 func (mr *MockClientServiceMockRecorder) Login(params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockClientService)(nil).Login), params)
 }
 
-// SetTransport mocks base method
+// SetTransport mocks base method.
 func (m *MockClientService) SetTransport(transport runtime.ClientTransport) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetTransport", transport)
 }
 
-// SetTransport indicates an expected call of SetTransport
+// SetTransport indicates an expected call of SetTransport.
 func (mr *MockClientServiceMockRecorder) SetTransport(transport interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTransport", reflect.TypeOf((*MockClientService)(nil).SetTransport), transport)

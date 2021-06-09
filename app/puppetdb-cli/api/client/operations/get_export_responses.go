@@ -45,11 +45,12 @@ func (o *GetExportReader) ReadResponse(response runtime.ClientResponse, consumer
 // NewGetExportOK creates a GetExportOK with default headers values
 func NewGetExportOK(writer io.Writer) *GetExportOK {
 	return &GetExportOK{
+
 		Payload: writer,
 	}
 }
 
-/*GetExportOK handles this case with default header values.
+/* GetExportOK describes a response with status code 200, with default header values.
 
 returns gzipped archive of puppetdb data
 */
@@ -60,7 +61,6 @@ type GetExportOK struct {
 func (o *GetExportOK) Error() string {
 	return fmt.Sprintf("[GET /pdb/admin/v1/archive][%d] getExportOK  %+v", 200, o.Payload)
 }
-
 func (o *GetExportOK) GetPayload() io.Writer {
 	return o.Payload
 }
@@ -82,7 +82,7 @@ func NewGetExportDefault(code int) *GetExportDefault {
 	}
 }
 
-/*GetExportDefault handles this case with default header values.
+/* GetExportDefault describes a response with status code -1, with default header values.
 
 Unexpected error
 */
@@ -100,7 +100,6 @@ func (o *GetExportDefault) Code() int {
 func (o *GetExportDefault) Error() string {
 	return fmt.Sprintf("[GET /pdb/admin/v1/archive][%d] getExport default  %+v", o._statusCode, o.Payload)
 }
-
 func (o *GetExportDefault) GetPayload() *models.Error {
 	return o.Payload
 }

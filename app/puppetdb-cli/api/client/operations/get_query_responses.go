@@ -64,7 +64,7 @@ func NewGetQueryOK() *GetQueryOK {
 	return &GetQueryOK{}
 }
 
-/*GetQueryOK handles this case with default header values.
+/* GetQueryOK describes a response with status code 200, with default header values.
 
 returns query response
 */
@@ -75,7 +75,6 @@ type GetQueryOK struct {
 func (o *GetQueryOK) Error() string {
 	return fmt.Sprintf("[GET /pdb/query/v4][%d] getQueryOK  %+v", 200, o.Payload)
 }
-
 func (o *GetQueryOK) GetPayload() interface{} {
 	return o.Payload
 }
@@ -95,7 +94,7 @@ func NewGetQueryBadRequest() *GetQueryBadRequest {
 	return &GetQueryBadRequest{}
 }
 
-/*GetQueryBadRequest handles this case with default header values.
+/* GetQueryBadRequest describes a response with status code 400, with default header values.
 
 PQL parse error response
 */
@@ -106,7 +105,6 @@ type GetQueryBadRequest struct {
 func (o *GetQueryBadRequest) Error() string {
 	return fmt.Sprintf("[GET /pdb/query/v4][%d] getQueryBadRequest  %+v", 400, o.Payload)
 }
-
 func (o *GetQueryBadRequest) GetPayload() string {
 	return o.Payload
 }
@@ -126,7 +124,7 @@ func NewGetQueryForbidden() *GetQueryForbidden {
 	return &GetQueryForbidden{}
 }
 
-/*GetQueryForbidden handles this case with default header values.
+/* GetQueryForbidden describes a response with status code 403, with default header values.
 
 Permission denied response
 */
@@ -137,7 +135,6 @@ type GetQueryForbidden struct {
 func (o *GetQueryForbidden) Error() string {
 	return fmt.Sprintf("[GET /pdb/query/v4][%d] getQueryForbidden  %+v", 403, o.Payload)
 }
-
 func (o *GetQueryForbidden) GetPayload() string {
 	return o.Payload
 }
@@ -157,7 +154,7 @@ func NewGetQueryInternalServerError() *GetQueryInternalServerError {
 	return &GetQueryInternalServerError{}
 }
 
-/*GetQueryInternalServerError handles this case with default header values.
+/* GetQueryInternalServerError describes a response with status code 500, with default header values.
 
 Server error
 */
@@ -168,7 +165,6 @@ type GetQueryInternalServerError struct {
 func (o *GetQueryInternalServerError) Error() string {
 	return fmt.Sprintf("[GET /pdb/query/v4][%d] getQueryInternalServerError  %+v", 500, o.Payload)
 }
-
 func (o *GetQueryInternalServerError) GetPayload() *models.ServerError {
 	return o.Payload
 }
@@ -192,7 +188,7 @@ func NewGetQueryDefault(code int) *GetQueryDefault {
 	}
 }
 
-/*GetQueryDefault handles this case with default header values.
+/* GetQueryDefault describes a response with status code -1, with default header values.
 
 Unexpected error
 */
@@ -210,7 +206,6 @@ func (o *GetQueryDefault) Code() int {
 func (o *GetQueryDefault) Error() string {
 	return fmt.Sprintf("[GET /pdb/query/v4][%d] getQuery default  %+v", o._statusCode, o.Payload)
 }
-
 func (o *GetQueryDefault) GetPayload() *models.Error {
 	return o.Payload
 }

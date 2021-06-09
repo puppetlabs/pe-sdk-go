@@ -57,8 +57,3 @@ func New() *PuppetDb {
 		Client: api.NewClientWithConfig(api.SwaggerClientCfg{}),
 	}
 }
-
-// EnableCN enables the CN verification
-func (pdb *PuppetDb) EnableCN() {
-	pdb.Client.EnableCN()
-}

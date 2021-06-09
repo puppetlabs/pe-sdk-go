@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/puppetlabs/pe-sdk-go/tls"
+	tlshelper "github.com/puppetlabs/pe-sdk-go/tls"
 
 	openapihttptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
@@ -58,18 +58,10 @@ func (sc *SwaggerClient) getHTTPClient() (*http.Client, error) {
 	tlsClientOptions := openapihttptransport.TLSClientOptions{
 		CA: sc.Cacert,
 	}
-	cfg, err := openapihttptransport.TLSClientAuth(tlsClientOptions)
+
+	transport, err := tlshelper.GetHTTPTransport(tlsClientOptions, sc.UseCNVerification)
 	if err != nil {
 		return nil, err
-	}
-
-	if sc.UseCNVerification { // check server name against CN only
-		tls.EnableCNVerification(cfg)
-	}
-
-	transport := &http.Transport{
-		Proxy:           http.ProxyFromEnvironment,
-		TLSClientConfig: cfg,
 	}
 
 	return &http.Client{Transport: transport}, nil
@@ -82,10 +74,4 @@ func newOpenAPITransport(url url.URL, httpclient *http.Client) *openapihttptrans
 		fmt.Sprintf("%s:%s", url.Hostname(), url.Port()),
 		fmt.Sprintf("%s/v1", url.Path),
 		schemes, httpclient)
-}
-
-// EnableCN sets UseCNverification to true when retrying without
-// SAN
-func (sc *SwaggerClient) EnableCN() {
-	sc.UseCNVerification = true
 }
