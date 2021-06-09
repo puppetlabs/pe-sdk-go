@@ -10,9 +10,9 @@ func TestGetClientFailsIfNoUrl(t *testing.T) {
 	assert := assert.New(t)
 	errorMessage := "Unsupported protocol scheme: "
 
-	cacert := ""
-	serviceURL := ""
-	client := NewClient(cacert, serviceURL)
+	swaggerCfg := SwaggerClientCfg{}
+	client := NewClient(swaggerCfg)
+
 	_, receivedError := client.GetClient()
 	assert.EqualError(receivedError, errorMessage)
 }
@@ -20,9 +20,10 @@ func TestGetClientFailsIfNoUrl(t *testing.T) {
 func TestGetClientSuccess(t *testing.T) {
 	assert := assert.New(t)
 
-	cacert := ""
-	serviceURL := "https://random3751.com"
-	client := NewClient(cacert, serviceURL)
+	swaggerCfg := SwaggerClientCfg{
+		ServiceURL: "https://random3751.com",
+	}
+	client := NewClient(swaggerCfg)
 
 	_, receivedError := client.GetClient()
 
@@ -32,9 +33,11 @@ func TestGetClientSuccess(t *testing.T) {
 func TestGetClientFailsIfCannotParse(t *testing.T) {
 	assert := assert.New(t)
 
-	cacert := ""
-	serviceURL := "§¶£¡:random.com"
-	client := NewClient(cacert, serviceURL)
+	swaggerCfg := SwaggerClientCfg{
+		ServiceURL: "§¶£¡:random.com",
+	}
+
+	client := NewClient(swaggerCfg)
 	_, receivedError := client.GetClient()
 	assert.Error(receivedError)
 }

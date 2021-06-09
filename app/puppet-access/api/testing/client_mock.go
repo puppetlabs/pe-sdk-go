@@ -48,3 +48,15 @@ func (mr *MockClientMockRecorder) GetClient() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClient", reflect.TypeOf((*MockClient)(nil).GetClient))
 }
+
+// EnableCN mocks base method
+func (m *MockClient) EnableCN() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "EnableCN")
+}
+
+// EnableCN indicates an expected call of EnableCN
+func (mr *MockClientMockRecorder) EnableCN() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EnableCN", reflect.TypeOf((*MockClient)(nil).EnableCN))
+}
