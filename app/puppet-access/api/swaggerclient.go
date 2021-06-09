@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/puppetlabs/pe-sdk-go/tls"
+
 	openapihttptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-access/api/client"
@@ -12,32 +14,32 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
+//SwaggerClientCfg represent a pe-sdk-go swagger client config
+type SwaggerClientCfg struct {
+	Login, Password, Lifetime, URL, Label, Cacert, Username string
+	UseCNVerification                                       bool
+}
+
 //SwaggerClient represents a pe-sdk-go swagger client
 type SwaggerClient struct {
-	login, password, lifetime, url, label, cacert string
+	SwaggerClientCfg
 }
 
 //NewClient creates a new NewClient
-func NewClient(login, password, lifetime, url, label, cacert string) Client {
-	sc := SwaggerClient{
-		login:    login,
-		password: password,
-		lifetime: lifetime,
-		url:      url,
-		label:    label,
-		cacert:   cacert,
+func NewClient(cfg SwaggerClientCfg) Client {
+	return &SwaggerClient{
+		cfg,
 	}
-	return &sc
 }
 
 //GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetAccess, error) {
-	if sc.url == "" {
+	if sc.URL == "" {
 		err := fmt.Errorf("Please provide the service URL. For example, `puppet-access login [username] --service-url https://<HOSTNAME OF PUPPET ENTERPRISE CONSOLE>:4433/rbac-ap`")
 		return nil, err
 	}
 
-	url, err := url.Parse(sc.url)
+	url, err := url.Parse(sc.URL)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +49,8 @@ func (sc *SwaggerClient) GetClient() (*client.PuppetAccess, error) {
 		return nil, err
 	}
 
-	httpclient, err := getHTTPClient(sc.cacert)
+	httpclient, err := sc.getHTTPClient()
+
 	if err != nil {
 		return nil, err
 	}
@@ -58,13 +61,18 @@ func (sc *SwaggerClient) GetClient() (*client.PuppetAccess, error) {
 	return client.New(openapitransport, strfmt.Default), nil
 }
 
-func getHTTPClient(cacert string) (*http.Client, error) {
+func (sc *SwaggerClient) getHTTPClient() (*http.Client, error) {
 	tlsClientOptions := openapihttptransport.TLSClientOptions{
-		CA: cacert,
+		CA: sc.Cacert,
 	}
+
 	cfg, err := openapihttptransport.TLSClientAuth(tlsClientOptions)
 	if err != nil {
 		return nil, err
+	}
+
+	if sc.UseCNVerification { // check server name against CN only
+		tls.EnableCNVerification(cfg)
 	}
 
 	transport := &http.Transport{
@@ -82,4 +90,10 @@ func newOpenAPITransport(url url.URL, httpclient *http.Client) *openapihttptrans
 		fmt.Sprintf("%s:%s", url.Hostname(), url.Port()),
 		fmt.Sprintf("%s/v1", url.Path),
 		schemes, httpclient)
+}
+
+// EnableCN sets UseCNverification to true when retrying without
+// SAN
+func (sc *SwaggerClient) EnableCN() {
+	sc.UseCNVerification = true
 }

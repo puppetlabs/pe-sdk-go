@@ -1,12 +1,12 @@
 package api
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/puppetlabs/pe-sdk-go/tls"
 
 	openapihttptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
@@ -96,7 +96,7 @@ func (sc *SwaggerClient) getHTTPClient() (*http.Client, error) {
 	}
 
 	if sc.UseCNVerification { // check server name against CN only
-		enableCNVerification(cfg)
+		tls.EnableCNVerification(cfg)
 	}
 
 	transport := &http.Transport{
@@ -107,28 +107,6 @@ func (sc *SwaggerClient) getHTTPClient() (*http.Client, error) {
 	return &http.Client{Transport: transport}, nil
 }
 
-// This code is based https://github.com/golang/go/issues/40748#issuecomment-673612108
-// and should be used only as a workaround until all puppetdb servers certificates
-// are properly generated (and have the SAN fields added)
-func enableCNVerification(cfg *tls.Config) {
-	cfg.InsecureSkipVerify = true
-	cfg.VerifyConnection = func(cs tls.ConnectionState) error {
-		commonName := cs.PeerCertificates[0].Subject.CommonName
-		if commonName != cs.ServerName {
-			return fmt.Errorf("invalid certificate name %q, expected %q", commonName, cs.ServerName)
-		}
-		opts := x509.VerifyOptions{
-			Roots:         cfg.RootCAs,
-			Intermediates: x509.NewCertPool(),
-		}
-		for _, cert := range cs.PeerCertificates[1:] {
-			opts.Intermediates.AddCert(cert)
-		}
-		_, err := cs.PeerCertificates[0].Verify(opts)
-		return err
-	}
-}
-
 func newOpenAPITransport(url url.URL, httpclient *http.Client) *openapihttptransport.Runtime {
 	schemes := []string{url.Scheme}
 
@@ -136,4 +114,10 @@ func newOpenAPITransport(url url.URL, httpclient *http.Client) *openapihttptrans
 		fmt.Sprintf("%s:%s", url.Hostname(), url.Port()),
 		fmt.Sprintf("%s", url.Path),
 		schemes, httpclient)
+}
+
+// EnableCN sets UseCNverification to true when retrying without
+// SAN
+func (sc *SwaggerClient) EnableCN() {
+	sc.UseCNVerification = true
 }
