@@ -6,6 +6,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -48,7 +49,7 @@ func NewDeployOK() *DeployOK {
 	return &DeployOK{}
 }
 
-/*DeployOK handles this case with default header values.
+/* DeployOK describes a response with status code 200, with default header values.
 
 deploy command result
 */
@@ -59,7 +60,6 @@ type DeployOK struct {
 func (o *DeployOK) Error() string {
 	return fmt.Sprintf("[POST /deploys][%d] deployOK  %+v", 200, o.Payload)
 }
-
 func (o *DeployOK) GetPayload() []*DeployOKBodyItems0 {
 	return o.Payload
 }
@@ -81,7 +81,7 @@ func NewDeployDefault(code int) *DeployDefault {
 	}
 }
 
-/*DeployDefault handles this case with default header values.
+/* DeployDefault describes a response with status code -1, with default header values.
 
 Unexpected error
 */
@@ -99,7 +99,6 @@ func (o *DeployDefault) Code() int {
 func (o *DeployDefault) Error() string {
 	return fmt.Sprintf("[POST /deploys][%d] Deploy default  %+v", o._statusCode, o.Payload)
 }
-
 func (o *DeployDefault) GetPayload() *models.Error {
 	return o.Payload
 }
@@ -136,6 +135,11 @@ type DeployBody struct {
 
 // Validate validates this deploy body
 func (o *DeployBody) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this deploy body based on context it is used
+func (o *DeployBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
@@ -196,13 +200,40 @@ func (o *DeployOKBodyItems0) Validate(formats strfmt.Registry) error {
 }
 
 func (o *DeployOKBodyItems0) validateError(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.Error) { // not required
 		return nil
 	}
 
 	if o.Error != nil {
 		if err := o.Error.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("error")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this deploy o k body items0 based on the context it is used
+func (o *DeployOKBodyItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateError(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *DeployOKBodyItems0) contextValidateError(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Error != nil {
+		if err := o.Error.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("error")
 			}

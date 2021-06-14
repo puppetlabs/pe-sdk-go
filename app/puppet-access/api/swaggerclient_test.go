@@ -8,28 +8,32 @@ import (
 
 func TestGetClientSuccess(t *testing.T) {
 	assert := assert.New(t)
-	login := "username"
-	password := "pass"
-	lifetime := "10m"
-	url := "https://random1234.com"
-	label := "test_token"
-	cacert := ""
 
-	client := NewClient(login, password, lifetime, url, label, cacert)
+	swaggerCfg := SwaggerClientCfg{
+		URL:      "https://random1234.com",
+		Password: "pass",
+		Lifetime: "10m",
+		Label:    "test_token",
+		Login:    "username",
+	}
+
+	client := NewClient(swaggerCfg)
 	_, receivedError := client.GetClient()
 	assert.NoError(receivedError)
 }
 
 func TestGetClientFailsIfCannotParse(t *testing.T) {
 	assert := assert.New(t)
-	login := "username"
-	password := "pass"
-	lifetime := "10m"
-	url := "§¶£¡:random.com"
-	label := "test_token"
-	cacert := ""
 
-	client := NewClient(login, password, lifetime, url, label, cacert)
+	swaggerCfg := SwaggerClientCfg{
+		URL:      "§¶£¡:random.com",
+		Password: "pass",
+		Lifetime: "10m",
+		Label:    "test_token",
+		Login:    "username",
+	}
+	client := NewClient(swaggerCfg)
+
 	_, receivedError := client.GetClient()
 	assert.Error(receivedError)
 }

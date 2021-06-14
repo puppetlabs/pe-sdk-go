@@ -4,28 +4,39 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api"
 )
 
-// PuppetCode FIXME
-type PuppetCode struct {
+//PuppetCodeCfg config
+type PuppetCodeCfg struct {
 	ServiceURL string
 	Cacert     string
-	Client     api.Client
 	Token      string
+
+	UseCNVerification bool
+}
+
+// PuppetCode FIXME
+type PuppetCode struct {
+	Token  string
+	Client api.Client
 }
 
 // NewWithConfig creates a puppet code application with configuration
-func NewWithConfig(serviceURL, cacert, token string) *PuppetCode {
+func NewWithConfig(cfg PuppetCodeCfg) *PuppetCode {
+	apiCfg := api.SwaggerClientCfg{
+		ServiceURL:        cfg.ServiceURL,
+		Cacert:            cfg.Cacert,
+		Token:             cfg.Token,
+		UseCNVerification: cfg.UseCNVerification,
+	}
 	return &PuppetCode{
-		ServiceURL: serviceURL,
-		Cacert:     cacert,
-
-		Client: api.NewClient(cacert, serviceURL),
-		Token:  token,
+		Token:  cfg.Token,
+		Client: api.NewClient(apiCfg),
 	}
 }
 
 // New creates an unconfigured puppet code application
 func New() *PuppetCode {
 	return &PuppetCode{
-		Client: api.NewClient("", ""),
+		Token:  "",
+		Client: api.NewClient(api.SwaggerClientCfg{}),
 	}
 }

@@ -16,59 +16,73 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewPostImportParams creates a new PostImportParams object
-// with the default values initialized.
+// NewPostImportParams creates a new PostImportParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewPostImportParams() *PostImportParams {
-	var ()
 	return &PostImportParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewPostImportParamsWithTimeout creates a new PostImportParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewPostImportParamsWithTimeout(timeout time.Duration) *PostImportParams {
-	var ()
 	return &PostImportParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewPostImportParamsWithContext creates a new PostImportParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewPostImportParamsWithContext(ctx context.Context) *PostImportParams {
-	var ()
 	return &PostImportParams{
-
 		Context: ctx,
 	}
 }
 
 // NewPostImportParamsWithHTTPClient creates a new PostImportParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewPostImportParamsWithHTTPClient(client *http.Client) *PostImportParams {
-	var ()
 	return &PostImportParams{
 		HTTPClient: client,
 	}
 }
 
-/*PostImportParams contains all the parameters to send to the API endpoint
-for the post import operation typically these are written to a http.Request
+/* PostImportParams contains all the parameters to send to the API endpoint
+   for the post import operation.
+
+   Typically these are written to a http.Request.
 */
 type PostImportParams struct {
 
-	/*Archive
-	  puppetdb archive to upload
+	/* Archive.
 
+	   puppetdb archive to upload
 	*/
 	Archive runtime.NamedReadCloser
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the post import params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *PostImportParams) WithDefaults() *PostImportParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the post import params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *PostImportParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the post import params
@@ -126,14 +140,11 @@ func (o *PostImportParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 	if o.Archive != nil {
 
 		if o.Archive != nil {
-
 			// form file param archive
 			if err := r.SetFileParam("archive", o.Archive); err != nil {
 				return err
 			}
-
 		}
-
 	}
 
 	if len(res) > 0 {

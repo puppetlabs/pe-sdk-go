@@ -16,56 +16,70 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewDeployParams creates a new DeployParams object
-// with the default values initialized.
+// NewDeployParams creates a new DeployParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeployParams() *DeployParams {
-	var ()
 	return &DeployParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeployParamsWithTimeout creates a new DeployParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewDeployParamsWithTimeout(timeout time.Duration) *DeployParams {
-	var ()
 	return &DeployParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewDeployParamsWithContext creates a new DeployParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewDeployParamsWithContext(ctx context.Context) *DeployParams {
-	var ()
 	return &DeployParams{
-
 		Context: ctx,
 	}
 }
 
 // NewDeployParamsWithHTTPClient creates a new DeployParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewDeployParamsWithHTTPClient(client *http.Client) *DeployParams {
-	var ()
 	return &DeployParams{
 		HTTPClient: client,
 	}
 }
 
-/*DeployParams contains all the parameters to send to the API endpoint
-for the deploy operation typically these are written to a http.Request
+/* DeployParams contains all the parameters to send to the API endpoint
+   for the deploy operation.
+
+   Typically these are written to a http.Request.
 */
 type DeployParams struct {
 
-	/*Body*/
+	// Body.
 	Body DeployBody
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the deploy params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DeployParams) WithDefaults() *DeployParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the deploy params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DeployParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the deploy params
@@ -119,7 +133,6 @@ func (o *DeployParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regist
 		return err
 	}
 	var res []error
-
 	if err := r.SetBodyParam(o.Body); err != nil {
 		return err
 	}

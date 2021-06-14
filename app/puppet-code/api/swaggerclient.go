@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
+	tlshelper "github.com/puppetlabs/pe-sdk-go/tls"
+
 	openapihttptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client"
@@ -12,23 +14,27 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
+//SwaggerClientCfg represent a pe-sdk-go swagger client config
+type SwaggerClientCfg struct {
+	Cacert, ServiceURL, Token string
+	UseCNVerification         bool
+}
+
 //SwaggerClient represents a puppec-code swagger client
 type SwaggerClient struct {
-	cacert, serviceURL string
+	SwaggerClientCfg
 }
 
 //NewClient creates a new SwaggerClient
-func NewClient(cacert, serviceURL string) Client {
-	sc := SwaggerClient{
-		cacert:     cacert,
-		serviceURL: serviceURL,
+func NewClient(cfg SwaggerClientCfg) Client {
+	return &SwaggerClient{
+		cfg,
 	}
-	return &sc
 }
 
 //GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetCode, error) {
-	url, err := url.Parse(sc.serviceURL)
+	url, err := url.Parse(sc.ServiceURL)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +43,7 @@ func (sc *SwaggerClient) GetClient() (*client.PuppetCode, error) {
 		return nil, err
 	}
 
-	httpclient, err := getHTTPClient(sc.cacert)
+	httpclient, err := sc.getHTTPClient()
 	if err != nil {
 		return nil, err
 	}
@@ -48,11 +54,17 @@ func (sc *SwaggerClient) GetClient() (*client.PuppetCode, error) {
 	return client.New(openapitransport, strfmt.Default), nil
 }
 
-func getHTTPClient(cacert string) (*http.Client, error) {
+func (sc *SwaggerClient) getHTTPClient() (*http.Client, error) {
 	tlsClientOptions := openapihttptransport.TLSClientOptions{
-		CA: cacert,
+		CA: sc.Cacert,
 	}
-	return openapihttptransport.TLSClient(tlsClientOptions)
+
+	transport, err := tlshelper.GetHTTPTransport(tlsClientOptions, sc.UseCNVerification)
+	if err != nil {
+		return nil, err
+	}
+
+	return &http.Client{Transport: transport}, nil
 }
 
 func newOpenAPITransport(url url.URL, httpclient *http.Client) *openapihttptransport.Runtime {

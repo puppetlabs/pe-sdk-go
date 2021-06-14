@@ -16,56 +16,70 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewGetQueryParams creates a new GetQueryParams object
-// with the default values initialized.
+// NewGetQueryParams creates a new GetQueryParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetQueryParams() *GetQueryParams {
-	var ()
 	return &GetQueryParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetQueryParamsWithTimeout creates a new GetQueryParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetQueryParamsWithTimeout(timeout time.Duration) *GetQueryParams {
-	var ()
 	return &GetQueryParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetQueryParamsWithContext creates a new GetQueryParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetQueryParamsWithContext(ctx context.Context) *GetQueryParams {
-	var ()
 	return &GetQueryParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetQueryParamsWithHTTPClient creates a new GetQueryParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetQueryParamsWithHTTPClient(client *http.Client) *GetQueryParams {
-	var ()
 	return &GetQueryParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetQueryParams contains all the parameters to send to the API endpoint
-for the get query operation typically these are written to a http.Request
+/* GetQueryParams contains all the parameters to send to the API endpoint
+   for the get query operation.
+
+   Typically these are written to a http.Request.
 */
 type GetQueryParams struct {
 
-	/*Query*/
+	// Query.
 	Query *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get query params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetQueryParams) WithDefaults() *GetQueryParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get query params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetQueryParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get query params
@@ -124,16 +138,17 @@ func (o *GetQueryParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 
 		// query param query
 		var qrQuery string
+
 		if o.Query != nil {
 			qrQuery = *o.Query
 		}
 		qQuery := qrQuery
 		if qQuery != "" {
+
 			if err := r.SetQueryParam("query", qQuery); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

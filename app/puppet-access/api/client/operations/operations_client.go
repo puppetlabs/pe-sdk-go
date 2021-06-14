@@ -51,6 +51,7 @@ func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
+
 	if err != nil {
 		return nil, err
 	}

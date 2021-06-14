@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/puppetlabs/pe-sdk-go/app/puppetdb-cli/api/client/operations"
@@ -19,7 +18,7 @@ func (puppetDb *PuppetDb) PostImportFile(filePath string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	fmt.Println(file.Name())
+
 	apiKeyHeaderAuth := httptransport.APIKeyAuth("X-Authentication", "header", puppetDb.Token)
 	postImportParameters := operations.NewPostImportParamsWithContext(context.Background())
 	postImportParameters.SetArchive(file)
