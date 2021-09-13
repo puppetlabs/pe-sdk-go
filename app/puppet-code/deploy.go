@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"os"
 
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api/client/operations"
@@ -64,8 +63,6 @@ type DeployArgs struct {
 }
 
 func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems0) []byte {
-	fmt.Fprintf(os.Stderr, "Found %d environments.\n", len(payload))
-
 	if args.DryRun {
 		separator := ""
 		environments := ""
@@ -79,5 +76,7 @@ func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems
 	if err != nil {
 		log.Error(err.Error())
 	}
-	return resultPayload
+
+	info := []byte(fmt.Sprintf("Found %d environments.\n", len(payload)))
+	return append(info, resultPayload...)
 }
