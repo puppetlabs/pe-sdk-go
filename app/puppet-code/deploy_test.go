@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -81,7 +82,8 @@ func TestDeployStatusSucces(t *testing.T) {
 	puppetCode.Client = api
 	res, err := puppetCode.DeployWithErrorDetails(&args)
 	expected, _ := json.MarshalIndent(result.Payload, "", "  ")
-	assert.Equal(expected, res)
+	info := []byte(fmt.Sprintf("Found %d environments.\n", 0))
+	assert.Equal(append(info, expected...), res)
 	assert.Nil(err)
 }
 
