@@ -77,6 +77,5 @@ func writeDeployResult(args *DeployArgs, payload []*operations.DeployOKBodyItems
 		log.Error(err.Error())
 	}
 
-	info := []byte(fmt.Sprintf("Found %d environments.\n", len(payload)))
-	return append(info, resultPayload...)
+	return resultPayload
 }
