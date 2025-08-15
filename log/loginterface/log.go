@@ -6,7 +6,7 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
-//Log interface to logging service
+// Log interface to logging service
 type Log interface {
 	Trace(msg string)
 	Debug(msg string)

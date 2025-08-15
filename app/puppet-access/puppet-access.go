@@ -4,7 +4,7 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-access/api"
 )
 
-//PuppetAccessCfg config
+// PuppetAccessCfg config
 type PuppetAccessCfg struct {
 	Username string
 	Password string

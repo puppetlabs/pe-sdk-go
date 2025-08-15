@@ -64,10 +64,9 @@ func NewGetQueryOK() *GetQueryOK {
 	return &GetQueryOK{}
 }
 
-/* GetQueryOK describes a response with status code 200, with default header values.
-
-returns query response
-*/
+// GetQueryOK describes a response with status code 200, with default header values.
+//
+// returns query response
 type GetQueryOK struct {
 	Payload interface{}
 }
@@ -94,10 +93,9 @@ func NewGetQueryBadRequest() *GetQueryBadRequest {
 	return &GetQueryBadRequest{}
 }
 
-/* GetQueryBadRequest describes a response with status code 400, with default header values.
-
-PQL parse error response
-*/
+// GetQueryBadRequest describes a response with status code 400, with default header values.
+//
+// PQL parse error response
 type GetQueryBadRequest struct {
 	Payload string
 }
@@ -124,10 +122,9 @@ func NewGetQueryForbidden() *GetQueryForbidden {
 	return &GetQueryForbidden{}
 }
 
-/* GetQueryForbidden describes a response with status code 403, with default header values.
-
-Permission denied response
-*/
+// GetQueryForbidden describes a response with status code 403, with default header values.
+//
+// Permission denied response
 type GetQueryForbidden struct {
 	Payload string
 }
@@ -154,10 +151,9 @@ func NewGetQueryInternalServerError() *GetQueryInternalServerError {
 	return &GetQueryInternalServerError{}
 }
 
-/* GetQueryInternalServerError describes a response with status code 500, with default header values.
-
-Server error
-*/
+// GetQueryInternalServerError describes a response with status code 500, with default header values.
+//
+// Server error
 type GetQueryInternalServerError struct {
 	Payload *models.ServerError
 }
@@ -188,10 +184,9 @@ func NewGetQueryDefault(code int) *GetQueryDefault {
 	}
 }
 
-/* GetQueryDefault describes a response with status code -1, with default header values.
-
-Unexpected error
-*/
+// GetQueryDefault describes a response with status code -1, with default header values.
+//
+// Unexpected error
 type GetQueryDefault struct {
 	_statusCode int
 

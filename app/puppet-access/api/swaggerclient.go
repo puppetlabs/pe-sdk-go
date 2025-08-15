@@ -14,25 +14,25 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
-//SwaggerClientCfg represent a pe-sdk-go swagger client config
+// SwaggerClientCfg represent a pe-sdk-go swagger client config
 type SwaggerClientCfg struct {
 	Login, Password, Lifetime, URL, Label, Cacert, Username string
 	UseCNVerification                                       bool
 }
 
-//SwaggerClient represents a pe-sdk-go swagger client
+// SwaggerClient represents a pe-sdk-go swagger client
 type SwaggerClient struct {
 	SwaggerClientCfg
 }
 
-//NewClient creates a new NewClient
+// NewClient creates a new NewClient
 func NewClient(cfg SwaggerClientCfg) Client {
 	return &SwaggerClient{
 		cfg,
 	}
 }
 
-//GetClient configures and creates a swagger generated client
+// GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetAccess, error) {
 	if sc.URL == "" {
 		err := fmt.Errorf("Please provide the service URL. For example, `puppet-access login [username] --service-url https://<HOSTNAME OF PUPPET ENTERPRISE CONSOLE>:4433/rbac-ap`")

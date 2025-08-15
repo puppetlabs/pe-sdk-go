@@ -15,7 +15,7 @@ type authToken struct {
 	t *testing.T
 }
 
-//XAuthenticationWriter matcher
+// XAuthenticationWriter matcher
 func XAuthenticationWriter(t *testing.T, s string) gomock.Matcher {
 	return &authToken{
 		t: t,

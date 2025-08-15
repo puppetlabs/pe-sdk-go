@@ -46,10 +46,8 @@ func NewGetStatusOK() *GetStatusOK {
 	return &GetStatusOK{}
 }
 
-/* GetStatusOK describes a response with status code 200, with default header values.
-
-returns trapperkeeper status of puppetdb
-*/
+// GetStatusOK describes a response with status code 200, with default header values.
+// returns trapperkeeper status of puppetdb
 type GetStatusOK struct {
 	Payload interface{}
 }
@@ -78,10 +76,8 @@ func NewGetStatusDefault(code int) *GetStatusDefault {
 	}
 }
 
-/* GetStatusDefault describes a response with status code -1, with default header values.
-
-Unexpected error
-*/
+// GetStatusDefault describes a response with status code -1, with default header values.
+// Unexpected error
 type GetStatusDefault struct {
 	_statusCode int
 

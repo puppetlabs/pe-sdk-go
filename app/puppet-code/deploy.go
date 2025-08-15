@@ -40,7 +40,7 @@ func (puppetCode *PuppetCode) deploy(args *DeployArgs) (*operations.DeployOK, er
 	return client.Operations.Deploy(deployConfig, aPIKeyHeaderAuth)
 }
 
-//getDeployConfig creates a DeployParams based on command line arguments
+// getDeployConfig creates a DeployParams based on command line arguments
 func (puppetCode *PuppetCode) getDeployConfig(args *DeployArgs) *operations.DeployParams {
 	deployParamenters := operations.NewDeployParamsWithContext(context.Background())
 	body := operations.DeployBody{

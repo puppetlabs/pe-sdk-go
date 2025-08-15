@@ -76,8 +76,8 @@ func (ft *fileToken) Write(token string) error {
 	return fs.Chmod(ft.path, 0600)
 }
 
-//DeleteFile deletes the token file
-//If the token is not valid, or file is a symlink an error will be returned
+// DeleteFile deletes the token file
+// If the token is not valid, or file is a symlink an error will be returned
 func (ft *fileToken) Delete(force bool) error {
 	if force == true {
 		return ft.deleteFile()
@@ -153,7 +153,7 @@ func isValid(content string) bool {
 	return false
 }
 
-//defaultPath returns token default path
+// defaultPath returns token default path
 func defaultPath() string {
 	usr, err := user.Current()
 	if err != nil {

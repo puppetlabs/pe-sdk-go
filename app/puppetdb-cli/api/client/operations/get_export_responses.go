@@ -50,10 +50,9 @@ func NewGetExportOK(writer io.Writer) *GetExportOK {
 	}
 }
 
-/* GetExportOK describes a response with status code 200, with default header values.
-
-returns gzipped archive of puppetdb data
-*/
+// GetExportOK describes a response with status code 200, with default header values.
+//
+// returns gzipped archive of puppetdb data
 type GetExportOK struct {
 	Payload io.Writer
 }
@@ -82,10 +81,9 @@ func NewGetExportDefault(code int) *GetExportDefault {
 	}
 }
 
-/* GetExportDefault describes a response with status code -1, with default header values.
-
-Unexpected error
-*/
+// GetExportDefault describes a response with status code -1, with default header values.
+//
+// Unexpected error
 type GetExportDefault struct {
 	_statusCode int
 

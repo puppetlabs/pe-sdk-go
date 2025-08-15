@@ -49,10 +49,9 @@ func NewDeployOK() *DeployOK {
 	return &DeployOK{}
 }
 
-/* DeployOK describes a response with status code 200, with default header values.
-
-deploy command result
-*/
+// DeployOK describes a response with status code 200, with default header values.
+//
+// deploy command result
 type DeployOK struct {
 	Payload []*DeployOKBodyItems0
 }
@@ -81,10 +80,9 @@ func NewDeployDefault(code int) *DeployDefault {
 	}
 }
 
-/* DeployDefault describes a response with status code -1, with default header values.
-
-Unexpected error
-*/
+// DeployDefault describes a response with status code -1, with default header values.
+//
+// Unexpected error
 type DeployDefault struct {
 	_statusCode int
 
@@ -115,9 +113,8 @@ func (o *DeployDefault) readResponse(response runtime.ClientResponse, consumer r
 	return nil
 }
 
-/*DeployBody deploy body
-swagger:model DeployBody
-*/
+// DeployBody deploy body
+// swagger:model DeployBody
 type DeployBody struct {
 
 	// deploy all
@@ -161,9 +158,8 @@ func (o *DeployBody) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-/*DeployOKBodyItems0 deploy o k body items0
-swagger:model DeployOKBodyItems0
-*/
+// DeployOKBodyItems0 deploy o k body items0
+// swagger:model DeployOKBodyItems0
 type DeployOKBodyItems0 struct {
 
 	// The commit SHA of the control repo that Code Manager used to deploy code in that environment.

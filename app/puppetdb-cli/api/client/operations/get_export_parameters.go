@@ -52,11 +52,10 @@ func NewGetExportParamsWithHTTPClient(client *http.Client) *GetExportParams {
 	}
 }
 
-/* GetExportParams contains all the parameters to send to the API endpoint
-   for the get export operation.
-
-   Typically these are written to a http.Request.
-*/
+// GetExportParams contains all the parameters to send to the API endpoint
+// for the get export operation.
+//
+// Typically these are written to a http.Request.
 type GetExportParams struct {
 
 	// AnonymizationProfile.

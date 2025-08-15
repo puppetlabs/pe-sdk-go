@@ -14,25 +14,25 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
-//SwaggerClientCfg represent a pe-sdk-go swagger client config
+// SwaggerClientCfg represent a pe-sdk-go swagger client config
 type SwaggerClientCfg struct {
 	Cacert, ServiceURL, Token string
 	UseCNVerification         bool
 }
 
-//SwaggerClient represents a puppec-code swagger client
+// SwaggerClient represents a puppec-code swagger client
 type SwaggerClient struct {
 	SwaggerClientCfg
 }
 
-//NewClient creates a new SwaggerClient
+// NewClient creates a new SwaggerClient
 func NewClient(cfg SwaggerClientCfg) Client {
 	return &SwaggerClient{
 		cfg,
 	}
 }
 
-//GetClient configures and creates a swagger generated client
+// GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetCode, error) {
 	url, err := url.Parse(sc.ServiceURL)
 	if err != nil {

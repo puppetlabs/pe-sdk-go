@@ -52,11 +52,9 @@ func NewPostImportParamsWithHTTPClient(client *http.Client) *PostImportParams {
 	}
 }
 
-/* PostImportParams contains all the parameters to send to the API endpoint
-   for the post import operation.
-
-   Typically these are written to a http.Request.
-*/
+// PostImportParams contains all the parameters to send to the API endpoint
+// for the post import operation.
+// Typically these are written to a http.Request.
 type PostImportParams struct {
 
 	/* Archive.

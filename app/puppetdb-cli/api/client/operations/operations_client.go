@@ -17,9 +17,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientServi
 	return &Client{transport: transport, formats: formats}
 }
 
-/*
-Client for operations API
-*/
+// Client for operations API
 type Client struct {
 	transport runtime.ClientTransport
 	formats   strfmt.Registry
@@ -38,9 +36,7 @@ type ClientService interface {
 	SetTransport(transport runtime.ClientTransport)
 }
 
-/*
-  GetExport get export API
-*/
+// GetExport get export API
 func (a *Client) GetExport(params *GetExportParams, authInfo runtime.ClientAuthInfoWriter, writer io.Writer) (*GetExportOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
@@ -72,9 +68,7 @@ func (a *Client) GetExport(params *GetExportParams, authInfo runtime.ClientAuthI
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
-/*
-  GetQuery get query API
-*/
+// GetQuery get query API
 func (a *Client) GetQuery(params *GetQueryParams, authInfo runtime.ClientAuthInfoWriter) (*GetQueryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
@@ -106,9 +100,7 @@ func (a *Client) GetQuery(params *GetQueryParams, authInfo runtime.ClientAuthInf
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
-/*
-  GetStatus get status API
-*/
+// GetStatus get status API
 func (a *Client) GetStatus(params *GetStatusParams, authInfo runtime.ClientAuthInfoWriter) (*GetStatusOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
@@ -140,9 +132,7 @@ func (a *Client) GetStatus(params *GetStatusParams, authInfo runtime.ClientAuthI
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
-/*
-  PostImport post import API
-*/
+// PostImport post import API
 func (a *Client) PostImport(params *PostImportParams, authInfo runtime.ClientAuthInfoWriter) (*PostImportOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {

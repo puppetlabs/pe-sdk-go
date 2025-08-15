@@ -60,10 +60,9 @@ func NewLoginOK() *LoginOK {
 	return &LoginOK{}
 }
 
-/* LoginOK describes a response with status code 200, with default header values.
-
-Login to generate a token in RBAC
-*/
+// LoginOK describes a response with status code 200, with default header values.
+//
+// Login to generate a token in RBAC
 type LoginOK struct {
 	Payload *LoginOKBody
 }
@@ -92,10 +91,9 @@ func NewLoginBadRequest() *LoginBadRequest {
 	return &LoginBadRequest{}
 }
 
-/* LoginBadRequest describes a response with status code 400, with default header values.
-
-Bad request
-*/
+// LoginBadRequest describes a response with status code 400, with default header values.
+//
+// Bad request
 type LoginBadRequest struct {
 	Payload *models.Error
 }
@@ -124,10 +122,9 @@ func NewLoginUnauthorized() *LoginUnauthorized {
 	return &LoginUnauthorized{}
 }
 
-/* LoginUnauthorized describes a response with status code 401, with default header values.
-
-Authorization error
-*/
+// LoginUnauthorized describes a response with status code 401, with default header values.
+//
+// Authorization error
 type LoginUnauthorized struct {
 	Payload *models.Error
 }
@@ -158,10 +155,9 @@ func NewLoginDefault(code int) *LoginDefault {
 	}
 }
 
-/* LoginDefault describes a response with status code -1, with default header values.
-
-Unexpected error
-*/
+// LoginDefault describes a response with status code -1, with default header values.
+//
+// Unexpected error
 type LoginDefault struct {
 	_statusCode int
 
@@ -190,9 +186,8 @@ func (o *LoginDefault) readResponse(response runtime.ClientResponse, consumer ru
 	return nil
 }
 
-/*LoginOKBody puppet access login
-swagger:model LoginOKBody
-*/
+// LoginOKBody puppet access login
+// swagger:model LoginOKBody
 type LoginOKBody struct {
 
 	// token

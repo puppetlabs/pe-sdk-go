@@ -15,9 +15,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientServi
 	return &Client{transport: transport, formats: formats}
 }
 
-/*
-Client for operations API
-*/
+// Client for operations API
 type Client struct {
 	transport runtime.ClientTransport
 	formats   strfmt.Registry
@@ -32,9 +30,7 @@ type ClientService interface {
 	SetTransport(transport runtime.ClientTransport)
 }
 
-/*
-  Deploy deploy API
-*/
+// Deploy deploy API
 func (a *Client) Deploy(params *DeployParams, authInfo runtime.ClientAuthInfoWriter) (*DeployOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
@@ -66,9 +62,7 @@ func (a *Client) Deploy(params *DeployParams, authInfo runtime.ClientAuthInfoWri
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
-/*
-  GetStatus get status API
-*/
+// GetStatus get status API
 func (a *Client) GetStatus(params *GetStatusParams, authInfo runtime.ClientAuthInfoWriter) (*GetStatusOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {

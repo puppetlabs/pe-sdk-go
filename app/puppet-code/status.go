@@ -11,7 +11,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 )
 
-//GetStatusWithErrorDetails will check code manager api status and add error details to the error text
+// GetStatusWithErrorDetails will check code manager api status and add error details to the error text
 func (puppetCode *PuppetCode) GetStatusWithErrorDetails() ([]byte, error) {
 	resp, err := puppetCode.getStatus()
 	if err != nil {
