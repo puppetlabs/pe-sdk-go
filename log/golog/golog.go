@@ -13,7 +13,7 @@ type golog struct {
 	logLevel loglevel.LogLevel
 }
 
-//NewGolog constructs a golog instance
+// NewGolog constructs a golog instance
 func NewGolog() loginterface.Log {
 	return &golog{
 		logLevel: loglevel.Info,

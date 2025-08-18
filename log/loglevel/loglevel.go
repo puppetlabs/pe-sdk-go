@@ -1,9 +1,9 @@
 package loglevel
 
-//LogLevel integer values
+// LogLevel integer values
 type LogLevel int
 
-//Debug and all supported log levels
+// Debug and all supported log levels
 const (
 	Trace LogLevel = iota
 	Debug

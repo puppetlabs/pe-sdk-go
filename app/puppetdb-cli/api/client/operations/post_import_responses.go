@@ -48,10 +48,8 @@ func NewPostImportOK() *PostImportOK {
 	return &PostImportOK{}
 }
 
-/* PostImportOK describes a response with status code 200, with default header values.
-
-imported
-*/
+// PostImportOK describes a response with status code 200, with default header values.
+// imported
 type PostImportOK struct {
 	Payload *PostImportOKBody
 }
@@ -82,10 +80,8 @@ func NewPostImportDefault(code int) *PostImportDefault {
 	}
 }
 
-/* PostImportDefault describes a response with status code -1, with default header values.
-
-Unexpected error
-*/
+// PostImportDefault describes a response with status code -1, with default header values.
+// Unexpected error
 type PostImportDefault struct {
 	_statusCode int
 
@@ -116,9 +112,9 @@ func (o *PostImportDefault) readResponse(response runtime.ClientResponse, consum
 	return nil
 }
 
-/*PostImportOKBody puppetdb import
-swagger:model PostImportOKBody
-*/
+// PostImportOKBody puppetdb import
+// swagger:model PostImportOKBody
+
 type PostImportOKBody struct {
 
 	// whether the operation succeeded

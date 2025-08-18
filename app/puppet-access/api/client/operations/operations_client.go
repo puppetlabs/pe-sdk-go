@@ -15,9 +15,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientServi
 	return &Client{transport: transport, formats: formats}
 }
 
-/*
-Client for operations API
-*/
+// Client for operations API
 type Client struct {
 	transport runtime.ClientTransport
 	formats   strfmt.Registry
@@ -30,9 +28,7 @@ type ClientService interface {
 	SetTransport(transport runtime.ClientTransport)
 }
 
-/*
-  Login login API
-*/
+// Login login API
 func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {

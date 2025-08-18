@@ -4,7 +4,7 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/app/puppet-code/api"
 )
 
-//PuppetCodeCfg config
+// PuppetCodeCfg config
 type PuppetCodeCfg struct {
 	ServiceURL string
 	Cacert     string

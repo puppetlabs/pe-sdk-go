@@ -15,25 +15,25 @@ import (
 	"github.com/puppetlabs/pe-sdk-go/log/loglevel"
 )
 
-//SwaggerClientCfg represents a puppetdb-cli swagger client cfg
+// SwaggerClientCfg represents a puppetdb-cli swagger client cfg
 type SwaggerClientCfg struct {
 	Cacert, Cert, Key, URL, Token string
 	UseCNVerification             bool
 }
 
-//SwaggerClient represents a puppetdb-cli swagger client
+// SwaggerClient represents a puppetdb-cli swagger client
 type SwaggerClient struct {
 	SwaggerClientCfg
 }
 
-//NewClientWithConfig creates a new SwaggerClient
+// NewClientWithConfig creates a new SwaggerClient
 func NewClientWithConfig(cfg SwaggerClientCfg) Client {
 	return &SwaggerClient{
 		cfg,
 	}
 }
 
-//ArgError represents an argument error
+// ArgError represents an argument error
 type ArgError struct {
 	msg string
 }
@@ -58,7 +58,7 @@ func (sc *SwaggerClient) validateSchemeParameters(urlScheme string) error {
 	return nil
 }
 
-//GetClient configures and creates a swagger generated client
+// GetClient configures and creates a swagger generated client
 func (sc *SwaggerClient) GetClient() (*client.PuppetdbCli, error) {
 	url, err := url.Parse(sc.URL)
 	if err != nil {

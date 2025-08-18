@@ -22,7 +22,7 @@ func PrettyPrintPayload(payload interface{}) string {
 	return fmt.Sprint(string(e))
 }
 
-//WritePayload prints payload to output
+// WritePayload prints payload to output
 func WritePayload(output *os.File, payload interface{}) error {
 	e, err := MarshalIndent(payload, "", "  ")
 	if err != nil {
