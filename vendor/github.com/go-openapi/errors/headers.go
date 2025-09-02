@@ -21,7 +21,7 @@ import (
 )
 
 // Validation represents a failure of a precondition
-type Validation struct {
+type Validation struct { //nolint: errname
 	code    int32
 	Name    string
 	In      string
@@ -51,11 +51,16 @@ func (e Validation) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// ValidateName produces an error message name for an aliased property
+// ValidateName sets the name for a validation or updates it for a nested property
 func (e *Validation) ValidateName(name string) *Validation {
-	if e.Name == "" && name != "" {
-		e.Name = name
-		e.message = name + e.message
+	if name != "" {
+		if e.Name == "" {
+			e.Name = name
+			e.message = name + e.message
+		} else {
+			e.Name = name + "." + e.Name
+			e.message = name + "." + e.message
+		}
 	}
 	return e
 }
