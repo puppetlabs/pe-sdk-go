@@ -1,6 +1,6 @@
 module github.com/puppetlabs/pe-sdk-go
 
-go 1.26.1
+go 1.26.6
 
 require (
 	github.com/go-openapi/errors v0.22.2
