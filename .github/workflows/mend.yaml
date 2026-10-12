@@ -1,0 +1,37 @@
+---
+name: Mend Monitor
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '11 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mend_monitor:
+    if: ${{ github.repository_owner == 'puppetlabs' }}
+    runs-on: ubuntu-latest
+    name: Mend Monitor
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Download Mend
+        run: curl -o wss-unified-agent.jar https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
+      - name: Run Mend
+        run: java -jar wss-unified-agent.jar
+        env:
+          WS_APIKEY: ${{ secrets.MEND_API_KEY }}
+          WS_WSS_URL: https://saas-eu.whitesourcesoftware.com/agent
+          WS_USERKEY: ${{ secrets.MEND_TOKEN }}
+          WS_PRODUCTNAME: Puppet Enterprise
+          WS_PROJECTNAME: pe-sdk-go-main
+          WS_INCLUDE: go.mod
+
